@@ -1014,7 +1014,6 @@
       text-align: center;
       padding: var(--space-lg);
       transition: opacity 0.55s ease, visibility 0.55s ease;
-      cursor: pointer;
     }
 
     .intro-curtain.gone {
@@ -1044,6 +1043,33 @@
     .intro-sub {
       font-size: 0.88rem;
       color: var(--ink-soft);
+      margin-bottom: var(--space-md);
+    }
+
+    .intro-btn {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 1.05rem;
+      font-weight: 700;
+      padding: 0.95rem 1.75rem;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      color: var(--white);
+      background: linear-gradient(135deg, var(--coral), var(--tangerine), var(--sunshine));
+      background-size: 200% 200%;
+      animation: btnShimmer 3s ease infinite, introBtnPulse 2s ease-in-out infinite;
+      box-shadow: 0 8px 28px rgba(255, 107, 107, 0.45);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      transition: transform 0.2s;
+    }
+
+    .intro-btn:hover { transform: scale(1.05); }
+    .intro-btn:active { transform: scale(0.98); }
+
+    @keyframes introBtnPulse {
+      0%, 100% { box-shadow: 0 8px 28px rgba(255, 107, 107, 0.45); }
+      50%      { box-shadow: 0 10px 36px rgba(255, 159, 67, 0.55); }
     }
 
     @keyframes introPop {
@@ -1066,7 +1092,8 @@
     <div class="intro-inner">
       <p class="intro-emoji">🎉</p>
       <p class="intro-title">Cumpleaños de Denise</p>
-      <p class="intro-sub" id="intro-sub">Denise rock's 🎸 · toca o espera 2 seg</p>
+      <p class="intro-sub">Picnic en Chapultepec · 6 de junio</p>
+      <button type="button" class="intro-btn" id="intro-enter-btn">Bienvenid@ a mi fiesta 🎸</button>
     </div>
   </div>
 
@@ -1729,7 +1756,6 @@
       if (!audio) return;
       if (unmute) audio.muted = false;
       if (musicMuted) return;
-      if (musicHasStarted && !audio.paused) return;
       musicHasStarted = true;
       audio.play().catch(function () { musicHasStarted = false; });
     }
@@ -1763,6 +1789,7 @@
       }
 
       startMusic(true);
+      celebrationBurst();
     }
 
     function onSpotifyReady() {
@@ -1771,13 +1798,15 @@
     }
 
     function initIntroCurtain() {
-      var curtain = document.getElementById("intro-curtain");
-      if (!curtain) {
+      var btn = document.getElementById("intro-enter-btn");
+      if (!btn) {
         invitationEntered = true;
         return;
       }
-      curtain.addEventListener("click", enterInvitation);
-      setTimeout(enterInvitation, 2000);
+      btn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        enterInvitation();
+      });
     }
 
     function toggleMusic(e) {
