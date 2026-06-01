@@ -1526,7 +1526,8 @@
     const MESSAGES_TABLE = "picnic_messages";
     const PHOTOS_BUCKET = "picnic-photos";
 
-    let supabase = null;
+    let supabaseClient = null;
+    let supabaseLibPromise = null;
     let rsvpsCache = [];
     let spotifyController = null;
     let musicMuted = false;
@@ -1704,7 +1705,7 @@
     }
 
     function initSupabase() {
-      if (supabase) return true;
+      if (supabaseClient) return true;
       if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
         console.error("[Picnic] Faltan SUPABASE_URL o SUPABASE_ANON_KEY.");
         return false;
@@ -1715,7 +1716,7 @@
         return false;
       }
       try {
-        supabase = lib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        supabaseClient = lib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         return true;
       } catch (err) {
         console.error("[Picnic] Error al crear cliente Supabase:", err);
@@ -1724,20 +1725,15 @@
     }
 
     function ensureSupabaseClient() {
-      if (supabase) return Promise.resolve(true);
+      if (supabaseClient) return Promise.resolve(true);
       return new Promise((resolve) => {
-        const finish = () => resolve(initSupabase());
-        if (window.supabase && typeof window.supabase.createClient === "function") {
-          finish();
-          return;
-        }
-        loadSupabaseLib(finish);
+        loadSupabaseLib(() => resolve(initSupabase()));
       });
     }
 
     async function loadRSVPs() {
-      if (!supabase) return false;
-      const { data, error } = await supabase
+      if (!supabaseClient) return false;
+      const { data, error } = await supabaseClient
         .from(SUPABASE_TABLE)
         .select("*")
         .order("updated_at", { ascending: false });
@@ -1755,8 +1751,8 @@
     }
 
     async function saveRSVPToSupabase(rsvp) {
-      if (!supabase) return { ok: false, error: "Sin cliente Supabase" };
-      const { error } = await supabase
+      if (!supabaseClient) return { ok: false, error: "Sin cliente Supabase" };
+      const { error } = await supabaseClient
         .from(SUPABASE_TABLE)
         .upsert(rsvpToRow(rsvp), { onConflict: "id" });
       if (error) {
@@ -1768,8 +1764,8 @@
     }
 
     function subscribeRSVPs() {
-      if (!supabase) return;
-      supabase
+      if (!supabaseClient) return;
+      supabaseClient
         .channel("picnic_rsvps_live")
         .on(
           "postgres_changes",
@@ -1786,7 +1782,7 @@
       let local = [];
       try { local = JSON.parse(localStorage.getItem(STORAGE_RSVPS)) || []; }
       catch { return; }
-      if (!local.length || !supabase) return;
+      if (!local.length || !supabaseClient) return;
 
       for (const r of local) {
         await saveRSVPToSupabase(r);
@@ -2298,14 +2294,28 @@
         callback();
         return;
       }
-      const s = document.createElement("script");
-      s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js";
-      s.onload = callback;
-      s.onerror = () => {
-        console.error("[Picnic] No se pudo cargar Supabase desde el CDN.");
-        callback();
-      };
-      document.head.appendChild(s);
+      if (supabaseLibPromise) {
+        supabaseLibPromise.then(callback);
+        return;
+      }
+      supabaseLibPromise = new Promise((resolve) => {
+        var existing = document.querySelector("script[data-picnic-supabase]");
+        if (existing) {
+          existing.addEventListener("load", resolve, { once: true });
+          existing.addEventListener("error", resolve, { once: true });
+          return;
+        }
+        const s = document.createElement("script");
+        s.dataset.picnicSupabase = "1";
+        s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js";
+        s.onload = resolve;
+        s.onerror = () => {
+          console.error("[Picnic] No se pudo cargar Supabase desde el CDN.");
+          resolve();
+        };
+        document.head.appendChild(s);
+      });
+      supabaseLibPromise.then(callback);
     }
 
     // ── Mensajes y fotos para Denise ──
@@ -2330,7 +2340,7 @@
 
       btn.disabled = true;
       btn.textContent = "Enviando…";
-      var result = await supabase.from(MESSAGES_TABLE).insert({ name: name, message: message });
+      var result = await supabaseClient.from(MESSAGES_TABLE).insert({ name: name, message: message });
       btn.disabled = false;
       btn.textContent = "Enviar mensaje 💌";
 
@@ -2407,7 +2417,7 @@
         var safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
         var prefix = uploaderName ? uploaderName.replace(/[^a-zA-Z0-9._-]/g, "_") + "_" : "";
         var path = Date.now() + "_" + Math.random().toString(36).slice(2, 7) + "_" + prefix + safeName;
-        var result = await supabase.storage.from(PHOTOS_BUCKET).upload(path, file, {
+        var result = await supabaseClient.storage.from(PHOTOS_BUCKET).upload(path, file, {
           cacheControl: "3600",
           upsert: false
         });
