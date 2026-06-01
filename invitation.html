@@ -1665,7 +1665,12 @@
       return `Picnic en CDMX · ${d} ${day} de ${month} · ${h12}${minStr} ${ampm}`;
     }
 
-    function getRSVPs() { return rsvpsCache; }
+    function getRSVPs() {
+      const my = getMyRSVP();
+      if (!my) return rsvpsCache;
+      if (rsvpsCache.some(r => r.id === my.id)) return rsvpsCache;
+      return rsvpsCache.concat(my);
+    }
 
     function rowToRsvp(row) {
       return {
@@ -1860,8 +1865,10 @@
     function computeTally(rsvps) {
       const totals = {};
       ITEMS.forEach(i => { totals[i.id] = 0; });
+      let guestTotal = 0;
 
       rsvps.forEach(rsvp => {
+        guestTotal += rsvp.guestCount || 1;
         if (!rsvp.items) return;
         ITEMS.forEach(item => {
           if (rsvp.items[item.id] > 0) {
@@ -1870,7 +1877,7 @@
         });
       });
 
-      return { totals };
+      return { totals, guestTotal, rsvpCount: rsvps.length };
     }
 
     function formatTallyLine(item, count) {
@@ -1883,18 +1890,23 @@
 
     function renderTally() {
       const rsvps = getRSVPs();
-      const { totals } = computeTally(rsvps);
+      const { totals, guestTotal, rsvpCount } = computeTally(rsvps);
       const ul = document.getElementById("community-tally");
       const lines = [];
+
+      if (rsvpCount === 0) {
+        ul.innerHTML = `<li class="empty">Todavía nadie ha confirmado — ¡sé el primero!</li>`;
+        return;
+      }
+
+      lines.push(`<li>🎉 ${guestTotal} ${guestTotal === 1 ? "persona confirmada" : "personas confirmadas"}</li>`);
 
       ITEMS.forEach(item => {
         const line = formatTallyLine(item, totals[item.id]);
         if (line) lines.push(`<li>${line}</li>`);
       });
 
-      ul.innerHTML = lines.length
-        ? lines.join("")
-        : `<li class="empty">Todavía nadie ha confirmado — ¡sé el primero!</li>`;
+      ul.innerHTML = lines.join("");
     }
 
     // ── Countdown ──
