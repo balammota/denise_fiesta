@@ -1066,13 +1066,14 @@
     <div class="intro-inner">
       <p class="intro-emoji">🎉</p>
       <p class="intro-title">Cumpleaños de Denise</p>
-      <p class="intro-sub">Neverita 🎵 · cargando…</p>
+      <p class="intro-sub" id="intro-sub">Neverita 🎵 · toca para entrar</p>
     </div>
   </div>
 
   <div id="confetti-layer" aria-hidden="true"></div>
 
   <div id="spotify-hidden-host" class="spotify-hidden" aria-hidden="true"></div>
+  <audio id="bg-audio" class="spotify-hidden" loop preload="auto" playsinline></audio>
   <button type="button" id="music-toggle" class="music-toggle" aria-label="Silenciar música" title="Neverita 🎵">🔊</button>
 
   <div class="page">
@@ -1296,7 +1297,8 @@
     const MAPS_LAT = 19.4155909;
     const MAPS_LNG = -99.1912819;
     const WHATSAPP_NUMBER = "+17252606690";
-    const SPOTIFY_TRACK_ID = "31i56LZnwE6uSu3exoHjtB"; // Neverita — Bad Bunny (solo el ID)
+    const SPOTIFY_TRACK_ID = "31i56LZnwE6uSu3exoHjtB"; // Neverita — Bad Bunny
+    const MUSIC_FILE = ""; // ej. "neverita.mp3" — autoplay fiable (pon el archivo en la carpeta)
     const EVENT_DATE = new Date("2026-06-06T13:00:00-06:00"); // Mexico City time — sábado 6 jun 2026, 1pm
 
     const SUPABASE_URL = "https://qhattugoalnjunycqpcr.supabase.co";
@@ -1311,7 +1313,9 @@
     let rsvpsCache = [];
     let spotifyController = null;
     let musicMuted = false;
-    let introDismissed = false;
+    let musicEngine = null;
+    let musicHasStarted = false;
+    let invitationEntered = false;
     let spotifyReady = false;
 
     const CONFETTI_COLORS = ["#ff6b6b","#ffd93d","#6bcbff","#c77dff","#95e1a3","#ff8fab","#ff9f43","#fff275","#e07a5f","#81b29a"];
@@ -1706,9 +1710,9 @@
       }
     }
 
-    // ── Spotify oculto (autoplay + mute) ──
+    // ── Música (MP3 preferido, Spotify respaldo) — un solo play, sin reintentos ──
     function updateMusicToggle() {
-      const btn = document.getElementById("music-toggle");
+      var btn = document.getElementById("music-toggle");
       if (!btn) return;
       btn.textContent = musicMuted ? "🔇" : "🔊";
       btn.classList.toggle("muted", musicMuted);
@@ -1716,77 +1720,110 @@
       btn.setAttribute("aria-label", musicMuted ? "Activar música" : "Silenciar música");
     }
 
-    function tryPlayMusic() {
-      if (!spotifyController || musicMuted) return;
-      try { spotifyController.play(); } catch (_) {}
+    function getAudioEl() {
+      return document.getElementById("bg-audio");
     }
 
-    function scheduleMusicRetries() {
+    function startAudioPlayback(unmute) {
+      var audio = getAudioEl();
+      if (!audio) return;
+      if (unmute) audio.muted = false;
       if (musicMuted) return;
-      [0, 150, 400, 800, 1200, 2000, 2800, 4000].forEach(function (ms) {
-        setTimeout(tryPlayMusic, ms);
-      });
+      if (musicHasStarted && !audio.paused) return;
+      musicHasStarted = true;
+      audio.play().catch(function () { musicHasStarted = false; });
     }
 
-    function startMusicNow() {
+    function startSpotifyPlayback() {
+      if (!spotifyController || musicMuted || musicHasStarted) return;
+      musicHasStarted = true;
+      try {
+        spotifyController.play();
+      } catch (_) {
+        musicHasStarted = false;
+      }
+    }
+
+    function startMusic(unmute) {
       musicMuted = false;
       updateMusicToggle();
-      if (spotifyReady) {
-        scheduleMusicRetries();
-        return;
+      if (musicEngine === "audio") startAudioPlayback(unmute);
+      else if (spotifyReady) startSpotifyPlayback();
+    }
+
+    function enterInvitation() {
+      if (invitationEntered) return;
+      invitationEntered = true;
+
+      var curtain = document.getElementById("intro-curtain");
+      if (curtain) {
+        curtain.classList.add("gone");
+        curtain.setAttribute("aria-hidden", "true");
+        setTimeout(function () { curtain.remove(); }, 550);
       }
-      var wait = setInterval(function () {
-        if (spotifyReady) {
-          clearInterval(wait);
-          scheduleMusicRetries();
-        }
-      }, 100);
-      setTimeout(function () { clearInterval(wait); }, 8000);
+
+      startMusic(true);
     }
 
     function onSpotifyReady() {
       spotifyReady = true;
-      if (introDismissed) startMusicNow();
-    }
-
-    function dismissIntro(fromUser) {
-      var curtain = document.getElementById("intro-curtain");
-      if (!curtain || introDismissed) return;
-      introDismissed = true;
-      curtain.classList.add("gone");
-      curtain.setAttribute("aria-hidden", "true");
-      setTimeout(function () { curtain.remove(); }, 600);
-      startMusicNow();
+      if (invitationEntered && !musicHasStarted) startSpotifyPlayback();
     }
 
     function initIntroCurtain() {
       var curtain = document.getElementById("intro-curtain");
       if (!curtain) {
-        introDismissed = true;
+        invitationEntered = true;
         return;
       }
-      curtain.addEventListener("click", function () { dismissIntro(true); });
-      curtain.addEventListener("touchstart", function () { dismissIntro(true); }, { passive: true });
-      setTimeout(function () { dismissIntro(false); }, 2000);
+      curtain.addEventListener("click", enterInvitation);
+      setTimeout(enterInvitation, 2000);
     }
 
     function toggleMusic(e) {
       if (e) e.stopPropagation();
-      if (!spotifyController) return;
       musicMuted = !musicMuted;
-      if (musicMuted) spotifyController.pause();
-      else scheduleMusicRetries();
+
+      if (musicEngine === "audio") {
+        var audio = getAudioEl();
+        if (audio) {
+          audio.muted = musicMuted;
+          if (!musicMuted && audio.paused) startAudioPlayback(true);
+        }
+      } else if (spotifyController) {
+        if (musicMuted) {
+          spotifyController.pause();
+        } else if (musicHasStarted) {
+          try { spotifyController.resume(); } catch (_) { startSpotifyPlayback(); }
+        } else {
+          startSpotifyPlayback();
+        }
+      }
       updateMusicToggle();
     }
 
-    function initSpotifyMusic() {
-      if (!SPOTIFY_TRACK_ID) return;
-
-      var host = document.getElementById("spotify-hidden-host");
+    function bindMusicToggle() {
       var toggle = document.getElementById("music-toggle");
-      if (!host) return;
-
       if (toggle) toggle.addEventListener("click", toggleMusic);
+    }
+
+    function initAudioEngine() {
+      if (!MUSIC_FILE) return false;
+      var audio = getAudioEl();
+      if (!audio) return false;
+      musicEngine = "audio";
+      audio.src = MUSIC_FILE;
+      audio.volume = 0.9;
+      audio.muted = true;
+      audio.play().catch(function () {});
+      return true;
+    }
+
+    function initSpotifyEngine() {
+      if (!SPOTIFY_TRACK_ID) return;
+      musicEngine = "spotify";
+      var host = document.getElementById("spotify-hidden-host");
+      if (!host) return;
 
       window.onSpotifyIframeApiReady = function (IFrameAPI) {
         IFrameAPI.createController(host, {
@@ -1806,11 +1843,13 @@
         s.async = true;
         document.body.appendChild(s);
       }
+    }
 
-      // Respaldo: primer scroll o toque en la página
-      var fallbackUnlock = function () { if (!musicMuted) scheduleMusicRetries(); };
-      document.addEventListener("touchstart", fallbackUnlock, { once: true, passive: true });
-      document.addEventListener("scroll", fallbackUnlock, { once: true, passive: true });
+    function initMusic() {
+      bindMusicToggle();
+      initIntroCurtain();
+      if (initAudioEngine()) return;
+      initSpotifyEngine();
     }
 
     // ── RSVP state ──
@@ -2048,8 +2087,7 @@
 
         initSparkles();
         initPartyPoppers();
-        initIntroCurtain();
-        initSpotifyMusic();
+        initMusic();
         spawnAmbientConfetti(15);
         setInterval(() => spawnAmbientConfetti(5), 5000);
 
