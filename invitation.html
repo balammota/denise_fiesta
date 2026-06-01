@@ -1066,7 +1066,7 @@
     <div class="intro-inner">
       <p class="intro-emoji">🎉</p>
       <p class="intro-title">Cumpleaños de Denise</p>
-      <p class="intro-sub" id="intro-sub">Neverita 🎵 · toca para entrar</p>
+      <p class="intro-sub" id="intro-sub">Denise rock's 🎸 · toca o espera 2 seg</p>
     </div>
   </div>
 
@@ -1298,7 +1298,7 @@
     const MAPS_LNG = -99.1912819;
     const WHATSAPP_NUMBER = "+17252606690";
     const SPOTIFY_TRACK_ID = "31i56LZnwE6uSu3exoHjtB"; // Neverita — Bad Bunny
-    const MUSIC_FILE = ""; // ej. "neverita.mp3" — autoplay fiable (pon el archivo en la carpeta)
+    const MUSIC_FILE = "Denise_rock´s.mp3";
     const EVENT_DATE = new Date("2026-06-06T13:00:00-06:00"); // Mexico City time — sábado 6 jun 2026, 1pm
 
     const SUPABASE_URL = "https://qhattugoalnjunycqpcr.supabase.co";
@@ -1716,7 +1716,7 @@
       if (!btn) return;
       btn.textContent = musicMuted ? "🔇" : "🔊";
       btn.classList.toggle("muted", musicMuted);
-      btn.title = musicMuted ? "Activar música — Neverita" : "Silenciar — Neverita";
+      btn.title = musicMuted ? "Activar música" : "Silenciar música";
       btn.setAttribute("aria-label", musicMuted ? "Activar música" : "Silenciar música");
     }
 
@@ -1812,7 +1812,7 @@
       var audio = getAudioEl();
       if (!audio) return false;
       musicEngine = "audio";
-      audio.src = MUSIC_FILE;
+      audio.src = encodeURI(MUSIC_FILE);
       audio.volume = 0.9;
       audio.muted = true;
       audio.play().catch(function () {});
