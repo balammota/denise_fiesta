@@ -1036,7 +1036,18 @@
       </div>
       <div class="card card-scrap card-tilt-right">
         <div class="card-pin" style="background: radial-gradient(circle at 35% 35%, #6bcbff, #2d8fd4);"></div>
-        <div class="bring-grid" id="static-bring-list"></div>
+        <div class="bring-grid" id="static-bring-list">
+          <div class="bring-item"><span class="emoji">🍿</span><span>Bolsas de papas</span></div>
+          <div class="bring-item"><span class="emoji">🧃</span><span>Bebidas</span></div>
+          <div class="bring-item"><span class="emoji">🍪</span><span>Galletas</span></div>
+          <div class="bring-item"><span class="emoji">🥙</span><span>Hummus</span></div>
+          <div class="bring-item"><span class="emoji">🧀</span><span>Queso y crackers</span></div>
+          <div class="bring-item"><span class="emoji">🍓</span><span>Fruta / fresas</span></div>
+          <div class="bring-item"><span class="emoji">🥤</span><span>Agua fresca</span></div>
+          <div class="bring-item"><span class="emoji">🍰</span><span>Pastel o postre</span></div>
+          <div class="bring-item"><span class="emoji">☕</span><span>Café o bebida caliente</span></div>
+          <div class="bring-item"><span class="emoji">⏳</span><span>Por confirmar</span></div>
+        </div>
         <div class="tally-box">
           <h3>Lo que ya confirmaron <span id="tally-live" class="tally-live" title="Sincronización">●</span></h3>
           <ul class="tally-list" id="community-tally">
@@ -1123,12 +1134,12 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
     // ═══════════════════════════════════════════════════════════
     //  VARIABLES EDITABLES — cambia aquí lo que necesites
     // ═══════════════════════════════════════════════════════════
-    const LOCATION = ""; // Update when confirmed — triggers Google Maps embed
+    const LOCATION = "Los Pinos, Bosque de Chapultepec, Ciudad de México, CDMX";
     const WHATSAPP_NUMBER = "+17252606690";
     const SPOTIFY_URL = "https://open.spotify.com/track/31i56LZnwE6uSu3exoHjtB"; // Neverita — Bad Bunny
     const EVENT_DATE = new Date("2026-06-06T13:00:00-06:00"); // Mexico City time — sábado 6 jun 2026, 1pm
@@ -1218,6 +1229,7 @@
 
     function initSparkles() {
       const container = document.getElementById("hero-sparkles");
+      if (!container) return;
       const colors = CONFETTI_COLORS;
       for (let i = 0; i < 10; i++) {
         const s = document.createElement("div");
@@ -1312,8 +1324,10 @@
     }
 
     function initSupabase() {
-      if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !window.supabase) return false;
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return false;
+      const lib = window.supabase;
+      if (!lib || typeof lib.createClient !== "function") return false;
+      supabase = lib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       return true;
     }
 
@@ -1404,9 +1418,6 @@
       return d.innerHTML;
     }
 
-    // ── Hero date ──
-    document.getElementById("hero-date-line").textContent = formatHeroDate(EVENT_DATE);
-
     // ── Location ──
     function renderLocation() {
       const card = document.getElementById("location-card");
@@ -1430,7 +1441,9 @@
 
     // ── Static bring list ──
     function renderStaticBringList() {
-      document.getElementById("static-bring-list").innerHTML = ITEMS.map(item => `
+      const grid = document.getElementById("static-bring-list");
+      if (!grid) return;
+      grid.innerHTML = ITEMS.map(item => `
         <div class="bring-item">
           <span class="emoji">${item.emoji}</span>
           <span>${item.label}</span>
@@ -1489,11 +1502,14 @@
 
     // ── Countdown ──
     let prevCountdown = { d: null, h: null, m: null, s: null };
+    const EVENT_TS = new Date("2026-06-06T19:00:00Z").getTime(); // 1pm CDMX (UTC-6)
 
-    function updateCountdown() {
-      const diff = EVENT_DATE - new Date();
+    function updateCountdown(force) {
       const wrap = document.getElementById("countdown");
       const done = document.getElementById("countdown-done");
+      if (!wrap || !done) return;
+
+      const diff = EVENT_TS - Date.now();
 
       if (diff <= 0) {
         wrap.classList.add("hidden");
@@ -1501,21 +1517,26 @@
         return;
       }
 
-      setCountdownVal("cd-days",    Math.floor(diff / 86400000), "d");
-      setCountdownVal("cd-hours",   Math.floor(diff / 3600000) % 24, "h");
-      setCountdownVal("cd-minutes", Math.floor(diff / 60000) % 60, "m");
-      setCountdownVal("cd-seconds", Math.floor(diff / 1000) % 60, "s");
+      wrap.classList.remove("hidden");
+      done.classList.add("hidden");
+
+      setCountdownVal("cd-days",    Math.floor(diff / 86400000), "d", force);
+      setCountdownVal("cd-hours",   Math.floor(diff / 3600000) % 24, "h", force);
+      setCountdownVal("cd-minutes", Math.floor(diff / 60000) % 60, "m", force);
+      setCountdownVal("cd-seconds", Math.floor(diff / 1000) % 60, "s", force);
     }
 
-    function setCountdownVal(id, val, key) {
+    function setCountdownVal(id, val, key, force) {
       const el = document.getElementById(id);
-      const str = String(val).padStart(2, "0");
-      if (prevCountdown[key] !== val) {
+      if (!el) return;
+      const n = Math.max(0, val);
+      const str = String(n).padStart(2, "0");
+      if (force || prevCountdown[key] !== n) {
         el.textContent = str;
         el.classList.remove("flip");
         void el.offsetWidth;
         el.classList.add("flip");
-        prevCountdown[key] = val;
+        prevCountdown[key] = n;
       }
     }
 
@@ -1749,21 +1770,36 @@
     });
 
     // ── Init ──
-    initSparkles();
-    initPartyPoppers();
-    spawnAmbientConfetti(15);
-    setInterval(() => spawnAmbientConfetti(5), 5000);
+    function boot() {
+      try {
+        const heroLine = document.getElementById("hero-date-line");
+        if (heroLine) heroLine.textContent = formatHeroDate(EVENT_DATE);
 
-    renderLocation();
-    renderStaticBringList();
-    renderTally();
-    renderSpotify();
-    updateRSVPButton();
-    buildChecklist();
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
+        initSparkles();
+        initPartyPoppers();
+        spawnAmbientConfetti(15);
+        setInterval(() => spawnAmbientConfetti(5), 5000);
 
-    initSupabaseRSVPs();
+        renderLocation();
+        renderStaticBringList();
+        renderTally();
+        renderSpotify();
+        updateRSVPButton();
+        buildChecklist();
+        updateCountdown(true);
+        setInterval(() => updateCountdown(false), 1000);
+
+        initSupabaseRSVPs();
+      } catch (err) {
+        console.error("Error al iniciar la invitación:", err);
+      }
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", boot);
+    } else {
+      boot();
+    }
   </script>
 </body>
 </html>
