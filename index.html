@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cumpleaños de Denise · Picnic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Earthy base */
+      --cream: #fff8ee;
+      --cream-dark: #f5e6cc;
+      --terracotta: #e07a5f;
+      --terracotta-dark: #c4563a;
+      --sage: #81b29a;
+      --sage-dark: #5a9078;
+      --ink: #3d3429;
+      --ink-soft: #6b5f52;
+      --white: #fffcf7;
+
+      /* Scrapbook rainbow */
+      --coral: #ff6b6b;
+      --sunshine: #ffd93d;
+      --sky: #6bcbff;
+      --lavender: #c77dff;
+      --mint: #95e1a3;
+      --peach: #ffb4a2;
+      --bubblegum: #ff8fab;
+      --lemon: #fff275;
+      --tangerine: #ff9f43;
+
+      --font-serif: "Playfair Display", Georgia, serif;
+      --font-sans: "Lato", system-ui, sans-serif;
+
+      --space-xs: 0.25rem;
+      --space-sm: 0.45rem;
+      --space-md: 0.65rem;
+      --space-lg: 1rem;
+      --space-xl: 1.35rem;
+      --space-2xl: 2rem;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --max-width: 420px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--ink);
+      background: #d4a96a;
+      line-height: 1.45;
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-size: 0.92rem;
+    }
+
+    /* Corkboard + paper patches */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(255,107,107,0.25) 0%, transparent 22%),
+        radial-gradient(circle at 85% 15%, rgba(107,203,255,0.28) 0%, transparent 20%),
+        radial-gradient(circle at 75% 75%, rgba(255,217,61,0.3) 0%, transparent 24%),
+        radial-gradient(circle at 10% 80%, rgba(199,125,255,0.22) 0%, transparent 20%),
+        radial-gradient(circle at 50% 50%, rgba(149,225,163,0.18) 0%, transparent 30%),
+        repeating-linear-gradient(45deg, rgba(0,0,0,0.03) 0 2px, transparent 2px 8px),
+        linear-gradient(160deg, #c9956a 0%, #b8844f 40%, #cfa068 100%);
+    }
+
+    #confetti-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      overflow: hidden;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      top: -20px;
+      opacity: 0;
+      animation: confettiFall linear forwards;
+    }
+
+    @keyframes confettiFall {
+      0%   { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+      100% { opacity: 0.6; transform: translateY(110vh) rotate(720deg) scale(0.6); }
+    }
+
+    .burst-piece {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      animation: burstOut 1.4s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+    }
+
+    @keyframes burstOut {
+      0%   { opacity: 1; transform: translate(0,0) rotate(0deg) scale(1); }
+      100% { opacity: 0; transform: translate(var(--bx), var(--by)) rotate(var(--br)) scale(0.3); }
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: var(--space-sm) var(--space-sm) var(--space-lg);
+    }
+
+    section {
+      margin-bottom: var(--space-md);
+      position: relative;
+    }
+
+    section + section {
+      margin-top: -6px;
+    }
+
+    /* Compact section header — label + title inline */
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .section-head h2 {
+      margin-bottom: 0;
+      font-size: clamp(1.2rem, 4vw, 1.45rem);
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    /* Scrapbook section headers */
+    .section-label {
+      display: inline-block;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding: 0.22rem 0.55rem;
+      border-radius: 3px;
+      margin-bottom: 0;
+      transform: rotate(-2deg);
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+      animation: stickerWiggle 4s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    .section-label.label-1 { background: var(--sunshine); color: #8a6d00; }
+    .section-label.label-2 { background: var(--sky); color: #1565a0; }
+    .section-label.label-3 { background: var(--bubblegum); color: #9c2348; }
+    .section-label.label-4 { background: var(--lavender); color: #5a189a; }
+    .section-label.label-5 { background: var(--mint); color: #1b6b3a; }
+
+    @keyframes stickerWiggle {
+      0%, 100% { transform: rotate(-2deg); }
+      50%      { transform: rotate(1deg) scale(1.03); }
+    }
+
+    h2 {
+      font-size: clamp(1.2rem, 4vw, 1.45rem);
+      margin-bottom: var(--space-sm);
+      letter-spacing: -0.01em;
+    }
+
+    h2.title-coral   { color: var(--coral); text-shadow: 2px 2px 0 var(--peach); }
+    h2.title-sky     { color: #2d8fd4; text-shadow: 2px 2px 0 #a8dff8; }
+    h2.title-lavender{ color: var(--lavender); text-shadow: 2px 2px 0 #e4c4ff; }
+    h2.title-sage    { color: var(--sage-dark); text-shadow: 2px 2px 0 #c2ecd0; }
+    h2.title-tangerine { color: var(--tangerine); text-shadow: 2px 2px 0 #ffd4a8; }
+
+    /* Floating scrapbook stickers */
+    .float-deco {
+      position: absolute;
+      font-size: 1rem;
+      pointer-events: none;
+      animation: floatDeco 5s ease-in-out infinite;
+      filter: drop-shadow(1px 2px 2px rgba(0,0,0,0.15));
+      z-index: 2;
+    }
+
+    @keyframes floatDeco {
+      0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+      50%      { transform: translateY(-10px) rotate(calc(var(--rot, 0deg) + 8deg)); }
+    }
+
+    /* ── Hero scrapbook ── */
+    .hero {
+      text-align: center;
+      padding: var(--space-sm) 0 var(--space-md);
+      position: relative;
+      margin-bottom: var(--space-xs);
+    }
+
+    .hero-paper {
+      background: var(--cream);
+      padding: var(--space-md) var(--space-sm) var(--space-md);
+      border-radius: 4px;
+      box-shadow: 0 6px 22px rgba(0,0,0,0.16), inset 0 0 0 2px rgba(255,255,255,0.6);
+      transform: rotate(-0.8deg);
+      position: relative;
+      overflow: visible;
+    }
+
+    .hero-paper::before,
+    .hero-paper::after {
+      content: "";
+      position: absolute;
+      width: 70px;
+      height: 22px;
+      opacity: 0.75;
+      z-index: 3;
+    }
+
+    .hero-paper::before {
+      top: -8px; left: 18%;
+      background: linear-gradient(135deg, rgba(255,143,171,0.7), rgba(255,143,171,0.4));
+      transform: rotate(-8deg);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .hero-paper::after {
+      top: -6px; right: 15%;
+      background: linear-gradient(135deg, rgba(107,203,255,0.7), rgba(107,203,255,0.4));
+      transform: rotate(6deg);
+    }
+
+    /* Party poppers */
+    .party-popper {
+      position: absolute;
+      width: 34px;
+      height: 40px;
+      z-index: 5;
+      cursor: pointer;
+    }
+
+    .party-popper.popper-left  { left: -4px;  top: 28%; transform: rotate(-25deg); }
+    .party-popper.popper-right { right: -4px; top: 20%; transform: rotate(25deg) scaleX(-1); }
+
+    .popper-cone {
+      width: 0;
+      height: 0;
+      border-left: 17px solid transparent;
+      border-right: 17px solid transparent;
+      border-bottom: 36px solid var(--cone-color, var(--coral));
+      filter: drop-shadow(2px 3px 2px rgba(0,0,0,0.2));
+      transform-origin: bottom center;
+    }
+
+    .popper-left  .popper-cone { --cone-color: var(--coral); }
+    .popper-right .popper-cone { --cone-color: var(--sky); }
+
+    .popper-cone::after {
+      content: "";
+      position: absolute;
+      bottom: -36px;
+      left: -11px;
+      width: 22px;
+      height: 11px;
+      background: repeating-linear-gradient(90deg, var(--sunshine) 0 4px, var(--lavender) 4px 8px, var(--mint) 8px 12px);
+      border-radius: 0 0 4px 4px;
+    }
+
+    .party-popper.bursting .popper-cone {
+      animation: popperShake 0.5s ease-in-out;
+    }
+
+    @keyframes popperShake {
+      0%, 100% { transform: rotate(0deg); }
+      20%      { transform: rotate(-12deg); }
+      40%      { transform: rotate(10deg); }
+      60%      { transform: rotate(-8deg); }
+      80%      { transform: rotate(6deg); }
+    }
+
+    .popper-stream {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      width: 4px;
+      height: 0;
+      transform: translateX(-50%);
+      opacity: 0;
+    }
+
+    .party-popper.bursting .popper-stream {
+      animation: streamPop 0.6s ease-out forwards;
+    }
+
+    @keyframes streamPop {
+      0%   { height: 0; opacity: 1; }
+      100% { height: 30px; opacity: 0; }
+    }
+
+    /* Polaroid photo */
+    .photo-frame {
+      width: min(160px, 48vw);
+      margin: 0 auto var(--space-sm);
+      background: var(--white);
+      padding: 8px 8px 28px;
+      box-shadow: 3px 6px 18px rgba(0,0,0,0.2);
+      transform: rotate(2.5deg);
+      animation: photoIn 1s ease-out both, polaroidBob 6s ease-in-out 1s infinite;
+      position: relative;
+    }
+
+    .photo-frame::before {
+      content: "✨ Denise ✨";
+      position: absolute;
+      bottom: 5px;
+      left: 0; right: 0;
+      text-align: center;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.72rem;
+      color: var(--ink-soft);
+    }
+
+    .tape {
+      position: absolute;
+      width: 55px;
+      height: 18px;
+      background: rgba(255,217,61,0.65);
+      z-index: 4;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .tape-tl { top: -6px; left: 20%; transform: rotate(-12deg); }
+    .tape-tr { top: -4px; right: 18%; transform: rotate(8deg); background: rgba(255,143,171,0.6); }
+
+    @keyframes photoIn {
+      from { opacity: 0; transform: rotate(8deg) scale(0.85) translateY(20px); }
+      to   { opacity: 1; transform: rotate(2.5deg) scale(1) translateY(0); }
+    }
+
+    @keyframes polaroidBob {
+      0%, 100% { transform: rotate(2.5deg) translateY(0); }
+      50%      { transform: rotate(1deg) translateY(-6px); }
+    }
+
+    .photo-frame img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+      background: var(--cream-dark);
+    }
+
+    .hero h1 {
+      font-size: clamp(1.55rem, 6vw, 2.2rem);
+      margin-bottom: var(--space-xs);
+      animation: fadeUp 0.9s ease-out 0.15s both;
+      background: linear-gradient(120deg, var(--coral), var(--tangerine), var(--lavender), var(--sky));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(1px 2px 0 rgba(255,255,255,0.8));
+    }
+
+    .hero-sub {
+      font-size: clamp(0.78rem, 2.8vw, 0.92rem);
+      color: var(--ink-soft);
+      font-weight: 400;
+      animation: fadeUp 0.9s ease-out 0.3s both;
+      background: var(--lemon);
+      display: inline-block;
+      padding: 0.28rem 0.7rem;
+      transform: rotate(-1deg);
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+      border-radius: 3px;
+      line-height: 1.35;
+    }
+
+    /* Countdown inside hero */
+    .hero-countdown {
+      margin-top: var(--space-md);
+      padding-top: var(--space-sm);
+      border-top: 2px dashed rgba(122, 143, 110, 0.35);
+    }
+
+    .hero-countdown .countdown-label-mini {
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--lavender);
+      font-weight: 700;
+      margin-bottom: var(--space-xs);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Sparkle dots */
+    .sparkles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      animation: sparkle 2.5s ease-in-out infinite;
+    }
+
+    @keyframes sparkle {
+      0%, 100% { opacity: 0; transform: scale(0); }
+      50%      { opacity: 1; transform: scale(1); }
+    }
+
+    /* ── Scrapbook cards ── */
+    .card {
+      background: var(--white);
+      padding: var(--space-md);
+      position: relative;
+      box-shadow: 3px 5px 16px rgba(0,0,0,0.14);
+    }
+
+    .card-scrap {
+      border-radius: 3px;
+    }
+
+    .card-scrap::before {
+      content: "";
+      position: absolute;
+      top: -7px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-1deg);
+      width: 56px;
+      height: 14px;
+      background: rgba(149,225,163,0.7);
+      z-index: 1;
+    }
+
+    .card-tilt-left  { transform: rotate(-1.2deg); background: #fff5f5; }
+    .card-tilt-right { transform: rotate(1deg);    background: #f0f9ff; }
+    .card-tilt-left2 { transform: rotate(0.8deg);  background: #faf5ff; }
+    .card-tilt-right2{ transform: rotate(-0.6deg); background: #fffbeb; }
+    .card-tilt-left3 { transform: rotate(-1deg);   background: #f0fff4; }
+
+    .card-pin {
+      position: absolute;
+      top: -6px;
+      right: 24px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ff8fab, #e0456a);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+      z-index: 2;
+    }
+
+    .card-pin::after {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+    }
+
+    /* Location */
+    .location-pending {
+      text-align: center;
+      padding: var(--space-sm) 0;
+      color: var(--ink-soft);
+      font-style: italic;
+      font-size: 0.88rem;
+    }
+
+    .location-pending span {
+      display: inline-block;
+      font-size: 1.4rem;
+      margin-bottom: 0.15rem;
+      animation: bounce 2s ease infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+
+    .location-address {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      color: var(--terracotta-dark);
+      margin-bottom: var(--space-sm);
+    }
+
+    .map-wrap {
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 2px dashed var(--sky);
+      aspect-ratio: 16 / 9;
+    }
+
+    .map-wrap iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+    /* Qué traer */
+    .bring-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.35rem;
+      margin-bottom: var(--space-sm);
+    }
+
+    .bring-item {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.35rem 0.45rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      box-shadow: 1px 2px 0 rgba(0,0,0,0.07);
+      line-height: 1.25;
+    }
+
+    .bring-item .emoji { font-size: 1rem; flex-shrink: 0; }
+    .bring-item:nth-child(1)  { background: #ffe0e0; border-left: 3px solid var(--coral); }
+    .bring-item:nth-child(2)  { background: #fff3c4; border-left: 3px solid var(--sunshine); }
+    .bring-item:nth-child(3)  { background: #ffe8d6; border-left: 3px solid var(--tangerine); }
+    .bring-item:nth-child(4)  { background: #e8f5e9; border-left: 3px solid var(--mint); }
+    .bring-item:nth-child(5)  { background: #fce4ff; border-left: 3px solid var(--lavender); }
+    .bring-item:nth-child(6)  { background: #ffebee; border-left: 3px solid var(--bubblegum); }
+    .bring-item:nth-child(7)  { background: #e3f2fd; border-left: 3px solid var(--sky); }
+    .bring-item:nth-child(8)  { background: #fff9c4; border-left: 3px solid #f9a825; }
+    .bring-item:nth-child(9)  { background: #efebe9; border-left: 3px solid #8d6e63; }
+
+    .bring-item:nth-child(10) { background: #f3e5f5; border-left: 3px solid #ab47bc; grid-column: span 2; justify-content: center; }
+
+    .tally-box {
+      background: linear-gradient(135deg, #fff9c4, #ffe0f0, #e0f7fa);
+      border-radius: var(--radius-sm);
+      padding: var(--space-sm);
+      border: 2px dashed var(--lavender);
+      position: relative;
+    }
+
+    .tally-box h3 {
+      font-size: 0.72rem;
+      color: var(--lavender);
+      margin-bottom: 0.3rem;
+      font-family: var(--font-sans);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .tally-list { list-style: none; display: flex; flex-direction: column; gap: 0.2rem; }
+    .tally-list li { font-size: 0.78rem; color: var(--ink-soft); padding-left: 0.1rem; line-height: 1.35; }
+    .tally-list li.empty { font-style: italic; opacity: 0.75; }
+
+    .tally-live {
+      font-size: 0.55rem;
+      color: #ccc;
+      vertical-align: middle;
+      transition: color 0.3s;
+    }
+
+    .tally-live.live { color: #4ade80; animation: livePulse 2s ease infinite; }
+    .tally-live.error { color: var(--coral); }
+
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.35; }
+    }
+
+    /* Countdown */
+    .countdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.3rem;
+      text-align: center;
+    }
+
+    .countdown-unit {
+      border-radius: 6px;
+      padding: 0.4rem 0.15rem;
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.08);
+      animation: countdownPulse 3s ease-in-out infinite;
+    }
+
+    .countdown-unit:nth-child(1) { background: #ffe0e0; animation-delay: 0s; }
+    .countdown-unit:nth-child(2) { background: #fff3c4; animation-delay: 0.3s; }
+    .countdown-unit:nth-child(3) { background: #e0f7fa; animation-delay: 0.6s; }
+    .countdown-unit:nth-child(4) { background: #f3e5f5; animation-delay: 0.9s; }
+
+    @keyframes countdownPulse {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-4px); }
+    }
+
+    .countdown-value {
+      font-family: var(--font-serif);
+      font-size: clamp(1.15rem, 5vw, 1.6rem);
+      font-weight: 700;
+      line-height: 1;
+      min-height: 1.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .countdown-unit:nth-child(1) .countdown-value { color: var(--coral); }
+    .countdown-unit:nth-child(2) .countdown-value { color: #e6a800; }
+    .countdown-unit:nth-child(3) .countdown-value { color: #2d8fd4; }
+    .countdown-unit:nth-child(4) .countdown-value { color: var(--lavender); }
+
+    .countdown-value.flip { animation: countFlip 0.55s ease; }
+
+    @keyframes countFlip {
+      0%   { opacity: 1; transform: rotateX(0); }
+      45%  { opacity: 0; transform: rotateX(-90deg); }
+      55%  { opacity: 0; transform: rotateX(90deg); }
+      100% { opacity: 1; transform: rotateX(0); }
+    }
+
+    .countdown-label {
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-soft);
+      margin-top: 0.15rem;
+      font-weight: 700;
+    }
+
+    .countdown-done {
+      text-align: center;
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      color: var(--coral);
+      padding: var(--space-sm);
+      animation: bounce 1.5s ease infinite;
+    }
+
+    /* RSVP */
+    .rsvp-area { text-align: center; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 0.75rem 1.4rem;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--coral), var(--tangerine), var(--sunshine));
+      background-size: 200% 200%;
+      animation: btnShimmer 3s ease infinite;
+      color: var(--white);
+      box-shadow: 0 6px 20px rgba(255,107,107,0.4);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    }
+
+    @keyframes btnShimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50%      { background-position: 100% 50%; }
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 10px 30px rgba(255,107,107,0.5);
+    }
+
+    .rsvp-confirmed-msg {
+      margin-top: var(--space-sm);
+      font-size: 0.82rem;
+      color: var(--sage-dark);
+      background: var(--mint);
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      transform: rotate(-1deg);
+    }
+
+    .rsvp-note {
+      margin-bottom: var(--space-sm);
+      color: var(--ink-soft);
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    /* Modal */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(61, 52, 41, 0.6);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: var(--space-md);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .overlay.open { opacity: 1; visibility: visible; }
+
+    @media (min-width: 540px) { .overlay { align-items: center; } }
+
+    .modal {
+      background: var(--cream);
+      border-radius: var(--radius-lg) var(--radius-lg) var(--radius-md) var(--radius-md);
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: var(--space-lg);
+      transform: translateY(24px) rotate(1deg);
+      transition: transform 0.35s ease;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      border: 3px solid var(--sunshine);
+    }
+
+    .overlay.open .modal { transform: translateY(0) rotate(0deg); }
+
+    @media (min-width: 540px) { .modal { border-radius: var(--radius-lg); } }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-lg);
+    }
+
+    .modal-header h2 {
+      font-size: 1.45rem;
+      margin: 0;
+      background: linear-gradient(90deg, var(--coral), var(--lavender));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .modal-close {
+      background: var(--bubblegum);
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: white;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .modal-close:hover { background: var(--coral); transform: scale(1.1); }
+
+    .step-dots {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: var(--space-lg);
+    }
+
+    .step-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--cream-dark);
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .step-dot.active { background: var(--coral); transform: scale(1.3); }
+    .step-dot.done   { background: var(--mint); }
+
+    .step { display: none; }
+    .step.active { display: block; animation: stepIn 0.35s ease; }
+
+    @keyframes stepIn {
+      from { opacity: 0; transform: translateX(12px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .step label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: var(--space-sm);
+      color: var(--ink);
+    }
+
+    .step input[type="text"] {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border: 2px dashed var(--lavender);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      background: white;
+      color: var(--ink);
+    }
+
+    .step input[type="text"]:focus {
+      outline: none;
+      border-color: var(--coral);
+      box-shadow: 0 0 0 3px rgba(255,107,107,0.2);
+    }
+
+    .guest-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-sm);
+    }
+
+    .guest-option { position: relative; }
+    .guest-option input { position: absolute; opacity: 0; pointer-events: none; }
+
+    .guest-option span {
+      display: block;
+      text-align: center;
+      padding: 0.85rem 0.5rem;
+      border: 2px solid var(--cream-dark);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      background: white;
+    }
+
+    .guest-option:nth-child(1) input:checked + span { border-color: var(--coral);    background: #ffe0e0; color: var(--coral); }
+    .guest-option:nth-child(2) input:checked + span { border-color: var(--sunshine); background: #fff9c4; color: #c8960a; }
+    .guest-option:nth-child(3) input:checked + span { border-color: var(--sky);     background: #e3f2fd; color: #2d8fd4; }
+    .guest-option:nth-child(4) input:checked + span { border-color: var(--mint);    background: #e8f5e9; color: var(--sage-dark); }
+    .guest-option:nth-child(5) input:checked + span { border-color: var(--lavender); background: #f3e5f5; color: var(--lavender); }
+
+    .guest-option input:checked + span { font-weight: 700; transform: scale(1.04); }
+
+    .bring-checklist {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .bring-check {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 0.6rem 0.75rem;
+      background: white;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .bring-check:hover { border-color: var(--sunshine); transform: translateX(3px); }
+    .bring-check.checked { border-color: var(--mint); background: #f0fff4; }
+
+    .bring-check input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--coral);
+      flex-shrink: 0;
+    }
+
+    .bring-check .label-text { flex: 1; font-size: 0.92rem; }
+
+    .qty-control { display: none; align-items: center; gap: 0.25rem; flex-shrink: 0; }
+    .bring-check.checked .qty-control { display: flex; }
+
+    .qty-btn {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: var(--sunshine);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .qty-btn:hover { background: var(--tangerine); color: white; }
+
+    .qty-val { min-width: 1.5rem; text-align: center; font-weight: 700; font-size: 0.9rem; }
+
+    .modal-actions { display: flex; gap: var(--space-sm); margin-top: var(--space-lg); }
+    .modal-actions .btn { flex: 1; }
+
+    .btn-back {
+      background: var(--cream-dark);
+      color: var(--ink-soft);
+      box-shadow: none;
+    }
+
+    .btn-back:hover { background: var(--peach); transform: none; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: var(--space-md) 0 var(--space-sm);
+      color: var(--ink-soft);
+      font-size: 0.82rem;
+    }
+
+    footer .heart-line {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.95rem;
+      margin-bottom: var(--space-sm);
+      color: white;
+      text-shadow: 1px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .btn-spotify {
+      background: linear-gradient(135deg, var(--mint), var(--sage));
+      color: var(--white);
+      font-size: 0.88rem;
+      padding: 0.7rem 1.5rem;
+      box-shadow: 0 4px 16px rgba(92, 109, 82, 0.3);
+    }
+
+    .btn-spotify:hover { transform: translateY(-2px) rotate(-2deg); }
+
+    .hidden { display: none !important; }
+
+    @media (min-width: 480px) {
+      :root { --max-width: 460px; }
+      .bring-grid { gap: 0.45rem; }
+      .bring-item { font-size: 0.78rem; padding: 0.4rem 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="confetti-layer" aria-hidden="true"></div>
+
+  <div class="page">
+
+    <!-- 1. Hero -->
+    <header class="hero">
+      <div class="hero-paper">
+        <div class="sparkles" id="hero-sparkles" aria-hidden="true"></div>
+
+        <div class="party-popper popper-left" id="popper-left" title="¡Pop!">
+          <div class="popper-stream"></div>
+          <div class="popper-cone"></div>
+        </div>
+        <div class="party-popper popper-right" id="popper-right" title="¡Pop!">
+          <div class="popper-stream"></div>
+          <div class="popper-cone"></div>
+        </div>
+
+        <div class="tape tape-tl"></div>
+        <div class="tape tape-tr"></div>
+
+        <div class="photo-frame">
+          <img id="denise-photo" src="denise_cumple.jpeg" alt="Denise">
+        </div>
+        <h1>Cumpleaños de Denise</h1>
+        <p class="hero-sub" id="hero-date-line">Picnic en CDMX</p>
+
+        <div class="hero-countdown">
+          <p class="countdown-label-mini">⏳ Falta poco</p>
+          <div class="countdown" id="countdown">
+            <div class="countdown-unit">
+              <div class="countdown-value" id="cd-days">—</div>
+              <div class="countdown-label">Días</div>
+            </div>
+            <div class="countdown-unit">
+              <div class="countdown-value" id="cd-hours">—</div>
+              <div class="countdown-label">Hrs</div>
+            </div>
+            <div class="countdown-unit">
+              <div class="countdown-value" id="cd-minutes">—</div>
+              <div class="countdown-label">Min</div>
+            </div>
+            <div class="countdown-unit">
+              <div class="countdown-value" id="cd-seconds">—</div>
+              <div class="countdown-label">Seg</div>
+            </div>
+          </div>
+          <div class="countdown-done hidden" id="countdown-done">¡Hoy es el día! 🎉</div>
+        </div>
+      </div>
+
+      <span class="float-deco" style="top:0; left:2%; --rot:-12deg;">🎀</span>
+      <span class="float-deco" style="top:20px; right:2%; --rot:8deg; animation-delay:1s;">⭐</span>
+      <span class="float-deco" style="bottom:0; right:4%; --rot:-6deg; animation-delay:0.5s;">🦋</span>
+    </header>
+
+    <!-- 2. Location -->
+    <section id="location-section">
+      <div class="section-head">
+        <span class="section-label label-1">Dónde</span>
+        <h2 class="title-coral">Ubicación</h2>
+      </div>
+      <div class="card card-scrap card-tilt-left" id="location-card-wrap">
+        <div class="card-pin"></div>
+        <div id="location-card"></div>
+      </div>
+    </section>
+
+    <!-- 3. Qué traer -->
+    <section>
+      <div class="section-head">
+        <span class="section-label label-2">Colabora</span>
+        <h2 class="title-sky">¿Qué traer?</h2>
+      </div>
+      <div class="card card-scrap card-tilt-right">
+        <div class="card-pin" style="background: radial-gradient(circle at 35% 35%, #6bcbff, #2d8fd4);"></div>
+        <div class="bring-grid" id="static-bring-list"></div>
+        <div class="tally-box">
+          <h3>Lo que ya confirmaron <span id="tally-live" class="tally-live" title="Sincronización">●</span></h3>
+          <ul class="tally-list" id="community-tally">
+            <li class="empty">Todavía nadie ha confirmado — ¡sé el primero!</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. RSVP -->
+    <section>
+      <div class="section-head">
+        <span class="section-label label-4">Confirma</span>
+        <h2 class="title-tangerine">RSVP</h2>
+      </div>
+      <div class="card card-scrap card-tilt-right2 rsvp-area">
+        <div class="card-pin" style="background: radial-gradient(circle at 35% 35%, #ffd93d, #f9a825);"></div>
+        <p class="rsvp-note">Cuéntanos si vienes y qué llevas → te mandamos a WhatsApp.</p>
+        <button class="btn btn-primary" id="rsvp-open-btn">Confirmar asistencia 🎉</button>
+        <p class="rsvp-confirmed-msg hidden" id="rsvp-confirmed-msg"></p>
+      </div>
+    </section>
+
+    <!-- 6. Footer -->
+    <footer>
+      <p class="heart-line">Hecho con amor 🌿</p>
+      <a class="btn btn-spotify hidden" id="spotify-btn" href="#" target="_blank" rel="noopener">Escuchar playlist 🎵</a>
+    </footer>
+  </div>
+
+  <!-- RSVP Modal -->
+  <div class="overlay" id="rsvp-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-title">¡Nos encantaría verte!</h2>
+        <button class="modal-close" id="modal-close" aria-label="Cerrar">×</button>
+      </div>
+      <div class="step-dots">
+        <span class="step-dot active" data-step="0"></span>
+        <span class="step-dot" data-step="1"></span>
+        <span class="step-dot" data-step="2"></span>
+      </div>
+
+      <div class="step active" data-step="0">
+        <label for="rsvp-name">¿Cómo te llamas?</label>
+        <input type="text" id="rsvp-name" placeholder="Tu nombre" autocomplete="name">
+      </div>
+
+      <div class="step" data-step="1">
+        <label>¿Cuántos van?</label>
+        <div class="guest-options">
+          <label class="guest-option">
+            <input type="radio" name="guests" value="1" checked>
+            <span>Solo yo</span>
+          </label>
+          <label class="guest-option">
+            <input type="radio" name="guests" value="2">
+            <span>+1</span>
+          </label>
+          <label class="guest-option">
+            <input type="radio" name="guests" value="3">
+            <span>+2</span>
+          </label>
+          <label class="guest-option">
+            <input type="radio" name="guests" value="4">
+            <span>+3</span>
+          </label>
+          <label class="guest-option" style="grid-column: span 2;">
+            <input type="radio" name="guests" value="5">
+            <span>Más (5+)</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="step" data-step="2">
+        <label>¿Qué vas a traer?</label>
+        <div class="bring-checklist" id="bring-checklist"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-back hidden" id="modal-back">Atrás</button>
+        <button class="btn btn-primary" id="modal-next">Siguiente</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ═══════════════════════════════════════════════════════════
+    //  VARIABLES EDITABLES — cambia aquí lo que necesites
+    // ═══════════════════════════════════════════════════════════
+    const LOCATION = ""; // Update when confirmed — triggers Google Maps embed
+    const WHATSAPP_NUMBER = "+17252606690";
+    const SPOTIFY_URL = "https://open.spotify.com/track/31i56LZnwE6uSu3exoHjtB"; // Neverita — Bad Bunny
+    const EVENT_DATE = new Date("2026-06-06T13:00:00-06:00"); // Mexico City time — sábado 6 jun 2026, 1pm
+
+    const SUPABASE_URL = "https://qhattugoalnjunycqpcr.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_JAqa9wTswoNaHIQaIK5l6Q_s55Dp3Ue";
+    // ═══════════════════════════════════════════════════════════
+
+    const STORAGE_RSVPS = "picnic_rsvps"; // migración one-time desde localStorage
+    const STORAGE_MY_RSVP = "picnic_my_rsvp";
+    const SUPABASE_TABLE = "picnic_rsvps";
+
+    let supabase = null;
+    let rsvpsCache = [];
+
+    const CONFETTI_COLORS = ["#ff6b6b","#ffd93d","#6bcbff","#c77dff","#95e1a3","#ff8fab","#ff9f43","#fff275","#e07a5f","#81b29a"];
+
+    const ITEMS = [
+      { id: "papas",      emoji: "🍿", label: "Bolsas de papas",      unit: "bolsas",     hasQty: true },
+      { id: "bebidas",    emoji: "🧃", label: "Bebidas",              unit: "",           hasQty: true },
+      { id: "galletas",   emoji: "🍪", label: "Galletas",             unit: "paquetes",   hasQty: true },
+      { id: "hummus",     emoji: "🥙", label: "Hummus",               unit: "",           hasQty: true },
+      { id: "queso",      emoji: "🧀", label: "Queso y crackers",     unit: "",           hasQty: true },
+      { id: "fruta",      emoji: "🍓", label: "Fruta / fresas",       unit: "",           hasQty: true },
+      { id: "agua",       emoji: "🥤", label: "Agua fresca",          unit: "",           hasQty: true },
+      { id: "pastel",     emoji: "🍰", label: "Pastel o postre",       unit: "",           hasQty: true },
+      { id: "cafe",       emoji: "☕", label: "Café o bebida caliente", unit: "",         hasQty: true },
+      { id: "confirmar",  emoji: "⏳", label: "Por confirmar",         unit: "",           hasQty: false }
+    ];
+
+    // ── Confetti & party poppers ──
+    function randomColor() {
+      return CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+    }
+
+    function createConfettiPiece(x, y, opts = {}) {
+      const layer = document.getElementById("confetti-layer");
+      const el = document.createElement("div");
+      const size = opts.size || (6 + Math.random() * 8);
+      const isCircle = Math.random() > 0.5;
+      const isStrip = !isCircle && Math.random() > 0.5;
+
+      el.className = opts.burst ? "burst-piece" : "confetti-piece";
+      el.style.left = x + "px";
+      el.style.top = y + "px";
+      el.style.width = isStrip ? (size * 0.4) + "px" : size + "px";
+      el.style.height = isStrip ? (size * 1.8) + "px" : size + "px";
+      el.style.background = randomColor();
+      el.style.borderRadius = isCircle ? "50%" : "2px";
+
+      if (opts.burst) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 60 + Math.random() * 140;
+        el.style.setProperty("--bx", Math.cos(angle) * dist + "px");
+        el.style.setProperty("--by", Math.sin(angle) * dist - 40 + "px");
+        el.style.setProperty("--br", (Math.random() * 720 - 360) + "deg");
+      } else {
+        el.style.animationDuration = (4 + Math.random() * 5) + "s";
+        el.style.animationDelay = (Math.random() * 3) + "s";
+      }
+
+      layer.appendChild(el);
+      el.addEventListener("animationend", () => el.remove());
+      setTimeout(() => el.remove(), opts.burst ? 1500 : 12000);
+    }
+
+    function burstFromPopper(popperEl, count = 55) {
+      if (!popperEl) return;
+      popperEl.classList.add("bursting");
+      setTimeout(() => popperEl.classList.remove("bursting"), 700);
+
+      const rect = popperEl.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + 10;
+
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => createConfettiPiece(x, y, { burst: true, size: 5 + Math.random() * 10 }), i * 8);
+      }
+    }
+
+    function spawnAmbientConfetti(count = 30) {
+      for (let i = 0; i < count; i++) {
+        const x = Math.random() * window.innerWidth;
+        createConfettiPiece(x, -20 - Math.random() * 100);
+      }
+    }
+
+    function initSparkles() {
+      const container = document.getElementById("hero-sparkles");
+      const colors = CONFETTI_COLORS;
+      for (let i = 0; i < 10; i++) {
+        const s = document.createElement("div");
+        s.className = "sparkle";
+        s.style.left = (5 + Math.random() * 90) + "%";
+        s.style.top = (5 + Math.random() * 90) + "%";
+        s.style.background = colors[i % colors.length];
+        s.style.animationDelay = (Math.random() * 3) + "s";
+        s.style.animationDuration = (1.5 + Math.random() * 2) + "s";
+        container.appendChild(s);
+      }
+    }
+
+    function initPartyPoppers() {
+      const left = document.getElementById("popper-left");
+      const right = document.getElementById("popper-right");
+
+      [left, right].forEach(p => {
+        p.addEventListener("click", () => burstFromPopper(p, 70));
+      });
+
+      setTimeout(() => {
+        burstFromPopper(left, 60);
+        setTimeout(() => burstFromPopper(right, 60), 400);
+      }, 800);
+
+      setInterval(() => {
+        burstFromPopper(Math.random() > 0.5 ? left : right, 45);
+      }, 7000);
+    }
+
+    function celebrationBurst() {
+      burstFromPopper(document.getElementById("popper-left"), 50);
+      burstFromPopper(document.getElementById("popper-right"), 50);
+      for (let i = 0; i < 40; i++) {
+        setTimeout(() => {
+          createConfettiPiece(Math.random() * window.innerWidth, -10);
+        }, i * 30);
+      }
+    }
+
+    // ── Helpers ──
+    function formatHeroDate(date) {
+      const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+      const months = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+      const d = days[date.getDay()];
+      const day = date.getDate();
+      const month = months[date.getMonth()];
+      const h = date.getHours();
+      const m = date.getMinutes();
+      const ampm = h >= 12 ? "pm" : "am";
+      const h12 = h % 12 || 12;
+      const minStr = m === 0 ? "" : `:${String(m).padStart(2, "0")}`;
+      return `Picnic en CDMX · ${d} ${day} de ${month} · ${h12}${minStr} ${ampm}`;
+    }
+
+    function getRSVPs() { return rsvpsCache; }
+
+    function rowToRsvp(row) {
+      return {
+        id: row.id,
+        name: row.name,
+        guestCount: row.guest_count,
+        items: row.items || {},
+        updatedAt: row.updated_at
+      };
+    }
+
+    function rsvpToRow(rsvp) {
+      return {
+        id: rsvp.id,
+        name: rsvp.name,
+        guest_count: rsvp.guestCount,
+        items: rsvp.items,
+        updated_at: rsvp.updatedAt || new Date().toISOString()
+      };
+    }
+
+    function setTallyLive(state) {
+      const dot = document.getElementById("tally-live");
+      if (!dot) return;
+      dot.classList.remove("live", "error");
+      if (state === "live") {
+        dot.classList.add("live");
+        dot.title = "En vivo — se actualiza entre invitados";
+      } else if (state === "error") {
+        dot.classList.add("error");
+        dot.title = "Sin conexión — revisa Supabase";
+      } else {
+        dot.title = "Conectando…";
+      }
+    }
+
+    function initSupabase() {
+      if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !window.supabase) return false;
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      return true;
+    }
+
+    async function loadRSVPs() {
+      if (!supabase) return false;
+      const { data, error } = await supabase
+        .from(SUPABASE_TABLE)
+        .select("*")
+        .order("updated_at", { ascending: false });
+
+      if (error) {
+        console.error("Supabase load:", error);
+        setTallyLive("error");
+        return false;
+      }
+
+      rsvpsCache = (data || []).map(rowToRsvp);
+      renderTally();
+      setTallyLive("live");
+      return true;
+    }
+
+    async function saveRSVPToSupabase(rsvp) {
+      if (!supabase) return { ok: false, error: "Sin cliente Supabase" };
+      const { error } = await supabase
+        .from(SUPABASE_TABLE)
+        .upsert(rsvpToRow(rsvp), { onConflict: "id" });
+      if (error) {
+        console.error("Supabase save:", error);
+        setTallyLive("error");
+        return { ok: false, error };
+      }
+      return { ok: true };
+    }
+
+    function subscribeRSVPs() {
+      if (!supabase) return;
+      supabase
+        .channel("picnic_rsvps_live")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: SUPABASE_TABLE },
+          () => { loadRSVPs(); }
+        )
+        .subscribe((status) => {
+          if (status === "SUBSCRIBED") setTallyLive("live");
+          if (status === "CHANNEL_ERROR") setTallyLive("error");
+        });
+    }
+
+    async function migrateLocalRSVPs() {
+      let local = [];
+      try { local = JSON.parse(localStorage.getItem(STORAGE_RSVPS)) || []; }
+      catch { return; }
+      if (!local.length || !supabase) return;
+
+      for (const r of local) {
+        await saveRSVPToSupabase(r);
+      }
+      localStorage.removeItem(STORAGE_RSVPS);
+    }
+
+    async function initSupabaseRSVPs() {
+      setTallyLive("pending");
+      if (!initSupabase()) {
+        setTallyLive("error");
+        return;
+      }
+      await migrateLocalRSVPs();
+      const ok = await loadRSVPs();
+      if (ok) subscribeRSVPs();
+    }
+
+    function getMyRSVP() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_MY_RSVP)); }
+      catch { return null; }
+    }
+
+    function saveMyRSVP(obj) { localStorage.setItem(STORAGE_MY_RSVP, JSON.stringify(obj)); }
+
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    }
+
+    function escapeHtml(str) {
+      const d = document.createElement("div");
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    // ── Hero date ──
+    document.getElementById("hero-date-line").textContent = formatHeroDate(EVENT_DATE);
+
+    // ── Location ──
+    function renderLocation() {
+      const card = document.getElementById("location-card");
+      if (!LOCATION.trim()) {
+        card.innerHTML = `
+          <div class="location-pending">
+            <span>📍</span>
+            <p>Lugar por confirmar</p>
+            <p style="font-size:0.85rem; margin-top:0.5rem;">Te avisamos pronto por WhatsApp</p>
+          </div>`;
+      } else {
+        const encoded = encodeURIComponent(LOCATION.trim());
+        card.innerHTML = `
+          <p class="location-address">${escapeHtml(LOCATION.trim())}</p>
+          <div class="map-wrap">
+            <iframe title="Mapa del picnic" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+              src="https://maps.google.com/maps?q=${encoded}&output=embed&hl=es"></iframe>
+          </div>`;
+      }
+    }
+
+    // ── Static bring list ──
+    function renderStaticBringList() {
+      document.getElementById("static-bring-list").innerHTML = ITEMS.map(item => `
+        <div class="bring-item">
+          <span class="emoji">${item.emoji}</span>
+          <span>${item.label}</span>
+        </div>
+      `).join("");
+    }
+
+    // ── Community tally ──
+    function computeTally(rsvps) {
+      const totals = {};
+      ITEMS.forEach(i => { totals[i.id] = 0; });
+      let porConfirmarCount = 0;
+
+      rsvps.forEach(rsvp => {
+        if (!rsvp.items) return;
+        ITEMS.forEach(item => {
+          if (item.id === "confirmar") {
+            if (rsvp.items.confirmar) porConfirmarCount++;
+          } else if (rsvp.items[item.id] > 0) {
+            totals[item.id] += rsvp.items[item.id];
+          }
+        });
+      });
+
+      return { totals, porConfirmarCount };
+    }
+
+    function formatTallyLine(item, count) {
+      if (count <= 0) return null;
+      let suffix = "";
+      if (item.unit === "bolsas") suffix = count === 1 ? " bolsa confirmada" : " bolsas confirmadas";
+      else if (item.unit === "paquetes") suffix = count === 1 ? " paquete" : " paquetes";
+      return `${item.emoji} ${item.label}: ${count}${suffix}`;
+    }
+
+    function renderTally() {
+      const rsvps = getRSVPs();
+      const { totals, porConfirmarCount } = computeTally(rsvps);
+      const ul = document.getElementById("community-tally");
+      const lines = [];
+
+      ITEMS.forEach(item => {
+        if (item.id === "confirmar") return;
+        const line = formatTallyLine(item, totals[item.id]);
+        if (line) lines.push(`<li>${line}</li>`);
+      });
+
+      if (porConfirmarCount > 0) {
+        lines.push(`<li>⏳ Por confirmar: ${porConfirmarCount} ${porConfirmarCount === 1 ? "persona" : "personas"}</li>`);
+      }
+
+      ul.innerHTML = lines.length
+        ? lines.join("")
+        : `<li class="empty">Todavía nadie ha confirmado — ¡sé el primero!</li>`;
+    }
+
+    // ── Countdown ──
+    let prevCountdown = { d: null, h: null, m: null, s: null };
+
+    function updateCountdown() {
+      const diff = EVENT_DATE - new Date();
+      const wrap = document.getElementById("countdown");
+      const done = document.getElementById("countdown-done");
+
+      if (diff <= 0) {
+        wrap.classList.add("hidden");
+        done.classList.remove("hidden");
+        return;
+      }
+
+      setCountdownVal("cd-days",    Math.floor(diff / 86400000), "d");
+      setCountdownVal("cd-hours",   Math.floor(diff / 3600000) % 24, "h");
+      setCountdownVal("cd-minutes", Math.floor(diff / 60000) % 60, "m");
+      setCountdownVal("cd-seconds", Math.floor(diff / 1000) % 60, "s");
+    }
+
+    function setCountdownVal(id, val, key) {
+      const el = document.getElementById(id);
+      const str = String(val).padStart(2, "0");
+      if (prevCountdown[key] !== val) {
+        el.textContent = str;
+        el.classList.remove("flip");
+        void el.offsetWidth;
+        el.classList.add("flip");
+        prevCountdown[key] = val;
+      }
+    }
+
+    // ── Spotify ──
+    function renderSpotify() {
+      const btn = document.getElementById("spotify-btn");
+      if (SPOTIFY_URL.trim()) {
+        btn.href = SPOTIFY_URL.trim();
+        btn.classList.remove("hidden");
+      }
+    }
+
+    // ── RSVP state ──
+    function updateRSVPButton() {
+      const my = getMyRSVP();
+      const btn = document.getElementById("rsvp-open-btn");
+      const msg = document.getElementById("rsvp-confirmed-msg");
+
+      if (my) {
+        btn.textContent = "Ya confirmaste 🎉 ¿Quieres actualizar?";
+        msg.textContent = `${my.name}, confirmaste para ${my.guestCount} ${my.guestCount === 1 ? "persona" : "personas"}.`;
+        msg.classList.remove("hidden");
+      } else {
+        btn.textContent = "Confirmar asistencia 🎉";
+        msg.classList.add("hidden");
+      }
+    }
+
+    // ── Modal / RSVP flow ──
+    let currentStep = 0;
+    const overlay = document.getElementById("rsvp-overlay");
+    const steps = document.querySelectorAll(".step");
+    const dots = document.querySelectorAll(".step-dot");
+    const btnNext = document.getElementById("modal-next");
+    const btnBack = document.getElementById("modal-back");
+
+    function buildChecklist() {
+      const list = document.getElementById("bring-checklist");
+      list.innerHTML = ITEMS.map(item => {
+        if (!item.hasQty) {
+          return `<label class="bring-check" data-id="${item.id}">
+            <input type="checkbox" data-id="${item.id}">
+            <span class="label-text">${item.emoji} ${item.label}</span>
+          </label>`;
+        }
+        return `<label class="bring-check" data-id="${item.id}">
+          <input type="checkbox" data-id="${item.id}">
+          <span class="label-text">${item.emoji} ${item.label}</span>
+          <span class="qty-control">
+            <button type="button" class="qty-btn qty-minus" aria-label="Menos">−</button>
+            <span class="qty-val">1</span>
+            <button type="button" class="qty-btn qty-plus" aria-label="Más">+</button>
+          </span>
+        </label>`;
+      }).join("");
+
+      list.querySelectorAll(".bring-check input[type=checkbox]").forEach(cb => {
+        cb.addEventListener("change", () => {
+          cb.closest(".bring-check").classList.toggle("checked", cb.checked);
+        });
+      });
+
+      list.querySelectorAll(".qty-minus").forEach(btn => {
+        btn.addEventListener("click", e => {
+          e.preventDefault(); e.stopPropagation();
+          const val = btn.nextElementSibling;
+          val.textContent = Math.max(1, parseInt(val.textContent, 10) - 1);
+        });
+      });
+
+      list.querySelectorAll(".qty-plus").forEach(btn => {
+        btn.addEventListener("click", e => {
+          e.preventDefault(); e.stopPropagation();
+          const val = btn.previousElementSibling;
+          val.textContent = Math.min(99, parseInt(val.textContent, 10) + 1);
+        });
+      });
+    }
+
+    function prefillModal() {
+      const my = getMyRSVP();
+      document.getElementById("rsvp-name").value = my ? my.name : "";
+
+      document.querySelectorAll('input[name="guests"]').forEach(r => {
+        if (!my) { r.checked = r.value === "1"; return; }
+        r.checked = my.guestCount >= 5 ? r.value === "5" : r.value === String(my.guestCount);
+      });
+
+      document.querySelectorAll("#bring-checklist .bring-check").forEach(row => {
+        const id = row.dataset.id;
+        const cb = row.querySelector("input[type=checkbox]");
+        cb.checked = false;
+        row.classList.remove("checked");
+
+        if (my && my.items) {
+          if (id === "confirmar") {
+            cb.checked = !!my.items.confirmar;
+            row.classList.toggle("checked", cb.checked);
+          } else if (my.items[id] > 0) {
+            cb.checked = true;
+            row.classList.add("checked");
+            const valEl = row.querySelector(".qty-val");
+            if (valEl) valEl.textContent = my.items[id];
+          }
+        }
+      });
+    }
+
+    function openModal() {
+      currentStep = 0;
+      prefillModal();
+      updateStepUI();
+      overlay.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      overlay.classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    function updateStepUI() {
+      steps.forEach(s => s.classList.toggle("active", parseInt(s.dataset.step, 10) === currentStep));
+      dots.forEach(d => {
+        const i = parseInt(d.dataset.step, 10);
+        d.classList.toggle("active", i === currentStep);
+        d.classList.toggle("done", i < currentStep);
+      });
+      btnBack.classList.toggle("hidden", currentStep === 0);
+      btnNext.textContent = currentStep === 2 ? "Confirmar y enviar 🎉" : "Siguiente";
+    }
+
+    function collectItems() {
+      const items = {};
+      ITEMS.forEach(i => { items[i.id] = 0; });
+      items.confirmar = false;
+
+      document.querySelectorAll("#bring-checklist .bring-check").forEach(row => {
+        const id = row.dataset.id;
+        const cb = row.querySelector("input[type=checkbox]");
+        if (!cb.checked) return;
+        if (id === "confirmar") items.confirmar = true;
+        else {
+          const valEl = row.querySelector(".qty-val");
+          items[id] = valEl ? parseInt(valEl.textContent, 10) : 1;
+        }
+      });
+      return items;
+    }
+
+    function formatItemsForMessage(items) {
+      const parts = [];
+      ITEMS.forEach(item => {
+        if (item.id === "confirmar") {
+          if (items.confirmar) parts.push("⏳ por confirmar");
+          return;
+        }
+        const q = items[item.id];
+        if (q > 0) {
+          let txt = `${item.emoji} ${item.label}`;
+          if (item.hasQty) txt += ` (${q}${item.unit ? " " + item.unit : ""})`;
+          parts.push(txt);
+        }
+      });
+      return parts.length ? parts.join(", ") : "nada específico aún";
+    }
+
+    async function submitRSVP() {
+      const name = document.getElementById("rsvp-name").value.trim();
+      if (!name) {
+        currentStep = 0;
+        updateStepUI();
+        document.getElementById("rsvp-name").focus();
+        return;
+      }
+
+      btnNext.disabled = true;
+      btnNext.textContent = "Guardando…";
+
+      const guestCount = parseInt(document.querySelector('input[name="guests"]:checked').value, 10);
+      const items = collectItems();
+      const myOld = getMyRSVP();
+      const rsvpId = myOld ? myOld.id : generateId();
+
+      const rsvp = { id: rsvpId, name, guestCount, items, updatedAt: new Date().toISOString() };
+
+      saveMyRSVP(rsvp);
+
+      const { ok } = await saveRSVPToSupabase(rsvp);
+      if (ok) {
+        const idx = rsvpsCache.findIndex(r => r.id === rsvpId);
+        if (idx >= 0) rsvpsCache[idx] = rsvp;
+        else rsvpsCache.push(rsvp);
+      }
+
+      btnNext.disabled = false;
+      updateStepUI();
+
+      const msg = `${name} confirmó su asistencia 🎉 Van ${guestCount} ${guestCount === 1 ? "persona" : "personas"} en total. Van a llevar: ${formatItemsForMessage(items)}.`;
+      const waUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, "")}?text=${encodeURIComponent(msg)}`;
+
+      closeModal();
+      renderTally();
+      updateRSVPButton();
+      celebrationBurst();
+      window.open(waUrl, "_blank");
+
+      if (!ok) alert("Tu RSVP se guardó en este dispositivo pero no pudo subir a la nube. Intenta actualizar de nuevo.");
+    }
+
+    // ── Event listeners ──
+    document.getElementById("rsvp-open-btn").addEventListener("click", openModal);
+    document.getElementById("modal-close").addEventListener("click", closeModal);
+    overlay.addEventListener("click", e => { if (e.target === overlay) closeModal(); });
+
+    btnBack.addEventListener("click", () => {
+      if (currentStep > 0) { currentStep--; updateStepUI(); }
+    });
+
+    btnNext.addEventListener("click", () => {
+      if (currentStep === 0 && !document.getElementById("rsvp-name").value.trim()) {
+        document.getElementById("rsvp-name").focus();
+        return;
+      }
+      if (currentStep < 2) { currentStep++; updateStepUI(); }
+      else submitRSVP();
+    });
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && overlay.classList.contains("open")) closeModal();
+    });
+
+    // ── Init ──
+    initSparkles();
+    initPartyPoppers();
+    spawnAmbientConfetti(15);
+    setInterval(() => spawnAmbientConfetti(5), 5000);
+
+    renderLocation();
+    renderStaticBringList();
+    renderTally();
+    renderSpotify();
+    updateRSVPButton();
+    buildChecklist();
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    initSupabaseRSVPs();
+  </script>
+</body>
+</html>
