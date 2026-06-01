@@ -963,24 +963,43 @@
 
     .btn-spotify:hover { transform: translateY(-2px) rotate(-2deg); }
 
-    .spotify-embed-wrap {
-      max-width: 100%;
-      margin: 0 auto var(--space-sm);
-      padding: var(--space-sm);
-      background: rgba(255,255,255,0.15);
-      border-radius: var(--radius-md);
+    /* Reproductor Spotify oculto + botón mute */
+    .spotify-hidden {
+      position: fixed;
+      width: 1px;
+      height: 1px;
+      left: -9999px;
+      top: 0;
+      opacity: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: -1;
     }
 
-    .spotify-label {
-      font-size: 0.82rem;
+    .music-toggle {
+      position: fixed;
+      bottom: 1.1rem;
+      right: 1.1rem;
+      z-index: 500;
+      width: 46px;
+      height: 46px;
+      border: none;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--coral), var(--tangerine));
       color: white;
-      margin-bottom: var(--space-xs);
-      font-weight: 700;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(255, 107, 107, 0.45);
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: musicPulse 2.5s ease-in-out infinite;
     }
 
-    .btn-spotify {
-      margin-top: var(--space-xs);
+    .music-toggle:hover { transform: scale(1.08); }
+    .music-toggle.muted { animation: none; background: var(--ink-soft); box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+
+    @keyframes musicPulse {
+      0%, 100% { box-shadow: 0 4px 18px rgba(255, 107, 107, 0.45); }
+      50%      { box-shadow: 0 4px 24px rgba(255, 159, 67, 0.65); }
     }
 
     .hidden { display: none !important; }
@@ -995,6 +1014,9 @@
 <body>
 
   <div id="confetti-layer" aria-hidden="true"></div>
+
+  <div id="spotify-hidden-host" class="spotify-hidden" aria-hidden="true"></div>
+  <button type="button" id="music-toggle" class="music-toggle" aria-label="Silenciar música" title="Neverita 🎵">🔊</button>
 
   <div class="page">
 
@@ -1149,21 +1171,6 @@
     <!-- 6. Footer -->
     <footer>
       <p class="heart-line">Hecho con amor 🌿</p>
-      <div class="spotify-embed-wrap">
-        <p class="spotify-label">🎵 Neverita — Bad Bunny</p>
-        <iframe
-          id="spotify-embed"
-          title="Spotify — Neverita"
-          style="border-radius:12px"
-          src="https://open.spotify.com/embed/track/31i56LZnwE6uSu3exoHjtB?utm_source=generator&theme=0"
-          width="100%"
-          height="152"
-          frameborder="0"
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          loading="lazy">
-        </iframe>
-      </div>
-      <a class="btn btn-spotify" id="spotify-btn" href="https://open.spotify.com/track/31i56LZnwE6uSu3exoHjtB" target="_blank" rel="noopener">Abrir en Spotify</a>
     </footer>
   </div>
 
@@ -1232,7 +1239,7 @@
     const MAPS_LAT = 19.4155909;
     const MAPS_LNG = -99.1912819;
     const WHATSAPP_NUMBER = "+17252606690";
-    const SPOTIFY_URL = "https://open.spotify.com/track/31i56LZnwE6uSu3exoHjtB"; // Neverita — Bad Bunny
+    const SPOTIFY_TRACK_ID = "31i56LZnwE6uSu3exoHjtB"; // Neverita — Bad Bunny (solo el ID)
     const EVENT_DATE = new Date("2026-06-06T13:00:00-06:00"); // Mexico City time — sábado 6 jun 2026, 1pm
 
     const SUPABASE_URL = "https://qhattugoalnjunycqpcr.supabase.co";
@@ -1245,6 +1252,8 @@
 
     let supabase = null;
     let rsvpsCache = [];
+    let spotifyController = null;
+    let musicMuted = false;
 
     const CONFETTI_COLORS = ["#ff6b6b","#ffd93d","#6bcbff","#c77dff","#95e1a3","#ff8fab","#ff9f43","#fff275","#e07a5f","#81b29a"];
 
@@ -1638,10 +1647,61 @@
       }
     }
 
-    // ── Spotify ──
-    function renderSpotify() {
-      const btn = document.getElementById("spotify-btn");
-      if (btn && SPOTIFY_URL.trim()) btn.href = SPOTIFY_URL.trim();
+    // ── Spotify oculto (autoplay + mute) ──
+    function updateMusicToggle() {
+      const btn = document.getElementById("music-toggle");
+      if (!btn) return;
+      btn.textContent = musicMuted ? "🔇" : "🔊";
+      btn.classList.toggle("muted", musicMuted);
+      btn.title = musicMuted ? "Activar música — Neverita" : "Silenciar — Neverita";
+      btn.setAttribute("aria-label", musicMuted ? "Activar música" : "Silenciar música");
+    }
+
+    function tryPlayMusic() {
+      if (!spotifyController || musicMuted) return;
+      try { spotifyController.play(); } catch (_) {}
+    }
+
+    function toggleMusic() {
+      if (!spotifyController) return;
+      musicMuted = !musicMuted;
+      if (musicMuted) spotifyController.pause();
+      else tryPlayMusic();
+      updateMusicToggle();
+    }
+
+    function initSpotifyMusic() {
+      if (!SPOTIFY_TRACK_ID) return;
+
+      const host = document.getElementById("spotify-hidden-host");
+      const toggle = document.getElementById("music-toggle");
+      if (!host) return;
+
+      if (toggle) toggle.addEventListener("click", toggleMusic);
+
+      window.onSpotifyIframeApiReady = (IFrameAPI) => {
+        IFrameAPI.createController(host, {
+          uri: "spotify:track:" + SPOTIFY_TRACK_ID,
+          width: 1,
+          height: 1,
+        }, (controller) => {
+          spotifyController = controller;
+          controller.addListener("ready", () => tryPlayMusic());
+        });
+      };
+
+      if (!document.getElementById("spotify-iframe-api")) {
+        const s = document.createElement("script");
+        s.id = "spotify-iframe-api";
+        s.src = "https://open.spotify.com/embed/iframe-api/v1";
+        s.async = true;
+        document.body.appendChild(s);
+      }
+
+      // Si el navegador bloquea autoplay, arranca al primer toque
+      const unlock = () => { tryPlayMusic(); };
+      document.addEventListener("touchstart", unlock, { once: true, passive: true });
+      document.addEventListener("click", unlock, { once: true });
     }
 
     // ── RSVP state ──
@@ -1885,12 +1945,12 @@
         renderLocation();
         renderStaticBringList();
         renderTally();
-        renderSpotify();
         updateRSVPButton();
         buildChecklist();
         updateCountdown(true);
         setInterval(() => updateCountdown(false), 1000);
 
+        initSpotifyMusic();
         bindEvents();
 
         loadSupabaseLib(() => initSupabaseRSVPs());
