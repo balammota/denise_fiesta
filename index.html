@@ -558,10 +558,133 @@
     .bring-item:nth-child(5)  { background: #fce4ff; border-left: 3px solid var(--lavender); }
     .bring-item:nth-child(6)  { background: #ffebee; border-left: 3px solid var(--bubblegum); }
     .bring-item:nth-child(7)  { background: #e3f2fd; border-left: 3px solid var(--sky); }
-    .bring-item:nth-child(8)  { background: #fff9c4; border-left: 3px solid #f9a825; }
-    .bring-item:nth-child(9)  { background: #efebe9; border-left: 3px solid #8d6e63; }
+    .bring-item:nth-child(8)  { background: #efebe9; border-left: 3px solid #8d6e63; }
+    .bring-item:nth-child(9)  { background: #f3e5f5; border-left: 3px solid #ab47bc; grid-column: span 2; justify-content: center; }
 
-    .bring-item:nth-child(10) { background: #f3e5f5; border-left: 3px solid #ab47bc; grid-column: span 2; justify-content: center; }
+    /* Mensaje + fotos */
+    .guestbook-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .guestbook-form label {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--ink);
+    }
+
+    .guestbook-form input[type="text"],
+    .guestbook-form textarea {
+      width: 100%;
+      padding: 0.75rem 0.85rem;
+      border: 2px dashed var(--lavender);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 0.92rem;
+      background: white;
+      color: var(--ink);
+    }
+
+    .guestbook-form textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .guestbook-form input:focus,
+    .guestbook-form textarea:focus {
+      outline: none;
+      border-color: var(--coral);
+    }
+
+    .guestbook-note {
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      margin-bottom: var(--space-sm);
+      line-height: 1.45;
+    }
+
+    .form-success {
+      font-size: 0.88rem;
+      color: var(--sage-dark);
+      background: rgba(149, 225, 163, 0.35);
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius-sm);
+      margin-top: var(--space-xs);
+    }
+
+    .form-error {
+      font-size: 0.88rem;
+      color: var(--coral);
+      background: rgba(255, 107, 107, 0.12);
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius-sm);
+      margin-top: var(--space-xs);
+    }
+
+    .photo-upload-zone {
+      border: 2px dashed var(--sky);
+      border-radius: var(--radius-sm);
+      padding: var(--space-md);
+      text-align: center;
+      background: rgba(107, 203, 255, 0.08);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .photo-upload-zone:hover { background: rgba(107, 203, 255, 0.15); }
+
+    .photo-upload-zone input[type="file"] {
+      position: absolute;
+      width: 0.1px;
+      height: 0.1px;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    .photo-upload-label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #2d8fd4;
+      cursor: pointer;
+    }
+
+    .photo-upload-hint {
+      font-size: 0.75rem;
+      color: var(--ink-soft);
+      margin-top: 0.25rem;
+    }
+
+    .photo-preview-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.35rem;
+      margin-top: var(--space-sm);
+    }
+
+    .photo-preview-list img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 2px solid white;
+      box-shadow: 1px 2px 6px rgba(0,0,0,0.12);
+    }
+
+    .btn-secondary-scrap {
+      background: white;
+      color: var(--sky);
+      border: 2px solid var(--sky);
+      font-size: 0.9rem;
+      padding: 0.75rem 1.4rem;
+      box-shadow: none;
+    }
+
+    .btn-secondary-scrap:hover {
+      background: rgba(107, 203, 255, 0.12);
+      transform: translateY(-1px);
+    }
 
     .tally-box {
       background: linear-gradient(135deg, #fff9c4, #ffe0f0, #e0f7fa);
@@ -1226,8 +1349,7 @@
           <div class="bring-item"><span class="emoji">🧀</span><span>Queso y crackers</span></div>
           <div class="bring-item"><span class="emoji">🍓</span><span>Fruta / fresas</span></div>
           <div class="bring-item"><span class="emoji">🥤</span><span>Agua fresca</span></div>
-          <div class="bring-item"><span class="emoji">🍰</span><span>Pastel o postre</span></div>
-          <div class="bring-item"><span class="emoji">☕</span><span>Café o bebida caliente</span></div>
+          <div class="bring-item"><span class="emoji">🧺</span><span>Manta para el pasto</span></div>
           <div class="bring-item"><span class="emoji">⏳</span><span>Por confirmar</span></div>
         </div>
         <div class="tally-box">
@@ -1247,13 +1369,65 @@
       </div>
       <div class="card card-scrap card-tilt-right2 rsvp-area">
         <div class="card-pin" style="background: radial-gradient(circle at 35% 35%, #ffd93d, #f9a825);"></div>
-        <p class="rsvp-note">Cuéntanos si vienes y qué llevas → te mandamos a WhatsApp.</p>
+        <p class="rsvp-note">Cuéntanos si vienes y qué llevas.</p>
         <button class="btn btn-primary" id="rsvp-open-btn">Confirmar asistencia 🎉</button>
         <p class="rsvp-confirmed-msg hidden" id="rsvp-confirmed-msg"></p>
       </div>
     </section>
 
-    <!-- 6. Footer -->
+    <!-- 5. Mensaje para Denise -->
+    <section>
+      <div class="section-head">
+        <span class="section-label label-5">Con cariño</span>
+        <h2 class="title-sage">Mensaje para Denise</h2>
+      </div>
+      <div class="card card-scrap card-tilt-left3">
+        <div class="card-pin" style="background: radial-gradient(circle at 35% 35%, #95e1a3, #5a9078);"></div>
+        <p class="guestbook-note">Déjale un mensajito — se los compilaremos todos juntos para regárselos 💌</p>
+        <form class="guestbook-form" id="message-form">
+          <div>
+            <label for="msg-name">Tu nombre</label>
+            <input type="text" id="msg-name" placeholder="¿Cómo te llamas?" autocomplete="name" required maxlength="80">
+          </div>
+          <div>
+            <label for="msg-text">Mensaje para Denise</label>
+            <textarea id="msg-text" placeholder="Escríbele algo bonito…" required maxlength="800"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" id="msg-submit-btn">Enviar mensaje 💌</button>
+          <p class="hidden form-success" id="msg-success"></p>
+          <p class="hidden form-error" id="msg-error"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- 6. Fotos del picnic -->
+    <section>
+      <div class="section-head">
+        <span class="section-label label-3">Recuerdos</span>
+        <h2 class="title-lavender">Fotos del picnic</h2>
+      </div>
+      <div class="card card-scrap card-tilt-right">
+        <div class="card-pin" style="background: radial-gradient(circle at 35% 35%, #c77dff, #9b59b6);"></div>
+        <p class="guestbook-note">Sube fotos del evento o random — las juntaremos para dárselas de regalo a Denise 📸</p>
+        <form class="guestbook-form" id="photo-form">
+          <div>
+            <label for="photo-uploader-name">Tu nombre (opcional)</label>
+            <input type="text" id="photo-uploader-name" placeholder="¿Quién sube las fotos?" maxlength="80">
+          </div>
+          <div class="photo-upload-zone" id="photo-drop-zone">
+            <label class="photo-upload-label" for="photo-input">Toca para elegir fotos</label>
+            <p class="photo-upload-hint">JPG, PNG · varias a la vez · máx. 10 MB c/u</p>
+            <input type="file" id="photo-input" accept="image/*" multiple>
+          </div>
+          <div class="photo-preview-list hidden" id="photo-preview-list"></div>
+          <button type="submit" class="btn btn-secondary-scrap" id="photo-submit-btn">Subir fotos 📸</button>
+          <p class="hidden form-success" id="photo-success"></p>
+          <p class="hidden form-error" id="photo-error"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- Footer -->
     <footer>
       <p class="heart-line">Hecho con amor 🌿</p>
     </footer>
@@ -1335,6 +1509,8 @@
     const STORAGE_RSVPS = "picnic_rsvps"; // migración one-time desde localStorage
     const STORAGE_MY_RSVP = "picnic_my_rsvp";
     const SUPABASE_TABLE = "picnic_rsvps";
+    const MESSAGES_TABLE = "picnic_messages";
+    const PHOTOS_BUCKET = "picnic-photos";
 
     let supabase = null;
     let rsvpsCache = [];
@@ -1355,8 +1531,7 @@
       { id: "queso",      emoji: "🧀", label: "Queso y crackers",     unit: "",           hasQty: true },
       { id: "fruta",      emoji: "🍓", label: "Fruta / fresas",       unit: "",           hasQty: true },
       { id: "agua",       emoji: "🥤", label: "Agua fresca",          unit: "",           hasQty: true },
-      { id: "pastel",     emoji: "🍰", label: "Pastel o postre",       unit: "",           hasQty: true },
-      { id: "cafe",       emoji: "☕", label: "Café o bebida caliente", unit: "",         hasQty: true },
+      { id: "manta",      emoji: "🧺", label: "Manta para el pasto",  unit: "",           hasQty: true },
       { id: "confirmar",  emoji: "⏳", label: "Por confirmar",         unit: "",           hasQty: false }
     ];
 
@@ -2088,6 +2263,134 @@
       document.head.appendChild(s);
     }
 
+    // ── Mensajes y fotos para Denise ──
+    async function submitMessage(e) {
+      e.preventDefault();
+      var name = document.getElementById("msg-name").value.trim();
+      var message = document.getElementById("msg-text").value.trim();
+      var successEl = document.getElementById("msg-success");
+      var errorEl = document.getElementById("msg-error");
+      var btn = document.getElementById("msg-submit-btn");
+
+      successEl.classList.add("hidden");
+      errorEl.classList.add("hidden");
+      if (!name || !message) return;
+
+      if (!supabase) {
+        errorEl.textContent = "Sin conexión — recarga la página e intenta de nuevo.";
+        errorEl.classList.remove("hidden");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Enviando…";
+      var result = await supabase.from(MESSAGES_TABLE).insert({ name: name, message: message });
+      btn.disabled = false;
+      btn.textContent = "Enviar mensaje 💌";
+
+      if (result.error) {
+        errorEl.textContent = "No se pudo enviar. ¿Corriste el SQL nuevo en Supabase?";
+        errorEl.classList.remove("hidden");
+        return;
+      }
+
+      document.getElementById("message-form").reset();
+      successEl.textContent = "¡Gracias, " + name + "! Denise va a amar tu mensaje 💕";
+      successEl.classList.remove("hidden");
+    }
+
+    function handlePhotoPreview() {
+      var input = document.getElementById("photo-input");
+      var list = document.getElementById("photo-preview-list");
+      var files = Array.from(input.files || []);
+      if (!files.length) {
+        list.classList.add("hidden");
+        list.innerHTML = "";
+        return;
+      }
+      list.innerHTML = "";
+      list.classList.remove("hidden");
+      files.slice(0, 6).forEach(function (file) {
+        var img = document.createElement("img");
+        img.src = URL.createObjectURL(file);
+        img.alt = file.name;
+        list.appendChild(img);
+      });
+      if (files.length > 6) {
+        var more = document.createElement("p");
+        more.className = "photo-upload-hint";
+        more.style.gridColumn = "span 3";
+        more.textContent = "+" + (files.length - 6) + " más…";
+        list.appendChild(more);
+      }
+    }
+
+    async function submitPhotos(e) {
+      e.preventDefault();
+      var input = document.getElementById("photo-input");
+      var files = Array.from(input.files || []);
+      var uploaderName = document.getElementById("photo-uploader-name").value.trim();
+      var successEl = document.getElementById("photo-success");
+      var errorEl = document.getElementById("photo-error");
+      var btn = document.getElementById("photo-submit-btn");
+
+      successEl.classList.add("hidden");
+      errorEl.classList.add("hidden");
+
+      if (!files.length) {
+        errorEl.textContent = "Elige al menos una foto.";
+        errorEl.classList.remove("hidden");
+        return;
+      }
+
+      if (!supabase) {
+        errorEl.textContent = "Sin conexión — recarga la página e intenta de nuevo.";
+        errorEl.classList.remove("hidden");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Subiendo…";
+      var uploaded = 0;
+
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        if (file.size > 10 * 1024 * 1024) continue;
+        var safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        var prefix = uploaderName ? uploaderName.replace(/[^a-zA-Z0-9._-]/g, "_") + "_" : "";
+        var path = Date.now() + "_" + Math.random().toString(36).slice(2, 7) + "_" + prefix + safeName;
+        var result = await supabase.storage.from(PHOTOS_BUCKET).upload(path, file, {
+          cacheControl: "3600",
+          upsert: false
+        });
+        if (!result.error) uploaded++;
+      }
+
+      btn.disabled = false;
+      btn.textContent = "Subir fotos 📸";
+
+      if (uploaded === 0) {
+        errorEl.textContent = "No se pudieron subir. Revisa el bucket picnic-photos en Supabase.";
+        errorEl.classList.remove("hidden");
+        return;
+      }
+
+      document.getElementById("photo-form").reset();
+      document.getElementById("photo-preview-list").classList.add("hidden");
+      document.getElementById("photo-preview-list").innerHTML = "";
+      successEl.textContent = "¡" + uploaded + " foto" + (uploaded > 1 ? "s" : "") + " subida" + (uploaded > 1 ? "s" : "") + "! Gracias 📸";
+      successEl.classList.remove("hidden");
+    }
+
+    function initGuestbook() {
+      var msgForm = document.getElementById("message-form");
+      var photoForm = document.getElementById("photo-form");
+      var photoInput = document.getElementById("photo-input");
+      if (msgForm) msgForm.addEventListener("submit", submitMessage);
+      if (photoForm) photoForm.addEventListener("submit", submitPhotos);
+      if (photoInput) photoInput.addEventListener("change", handlePhotoPreview);
+    }
+
     function bindEvents() {
       const openBtn = document.getElementById("rsvp-open-btn");
       const closeBtn = document.getElementById("modal-close");
@@ -2129,6 +2432,7 @@
         setInterval(() => updateCountdown(false), 1000);
 
         bindEvents();
+        initGuestbook();
 
         loadSupabaseLib(() => initSupabaseRSVPs());
       } catch (err) {

@@ -36,3 +36,54 @@ create policy "picnic_rsvps_update"
 
 -- Realtime (si falla, activa la tabla en Database → Replication)
 alter publication supabase_realtime add table public.picnic_rsvps;
+
+-- ═══════════════════════════════════════════════════════════
+-- Mensajes para Denise
+-- ═══════════════════════════════════════════════════════════
+
+create table if not exists public.picnic_messages (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  message text not null check (char_length(message) <= 800),
+  created_at timestamptz not null default now()
+);
+
+create index if not exists picnic_messages_created_at_idx
+  on public.picnic_messages (created_at desc);
+
+alter table public.picnic_messages enable row level security;
+
+drop policy if exists "picnic_messages_select" on public.picnic_messages;
+drop policy if exists "picnic_messages_insert" on public.picnic_messages;
+
+create policy "picnic_messages_select"
+  on public.picnic_messages for select
+  to anon, authenticated
+  using (true);
+
+create policy "picnic_messages_insert"
+  on public.picnic_messages for insert
+  to anon, authenticated
+  with check (true);
+
+-- ═══════════════════════════════════════════════════════════
+-- Fotos del picnic (Storage)
+-- Crea el bucket en Dashboard → Storage si el insert falla
+-- ═══════════════════════════════════════════════════════════
+
+insert into storage.buckets (id, name, public)
+values ('picnic-photos', 'picnic-photos', true)
+on conflict (id) do update set public = true;
+
+drop policy if exists "picnic_photos_select" on storage.objects;
+drop policy if exists "picnic_photos_insert" on storage.objects;
+
+create policy "picnic_photos_select"
+  on storage.objects for select
+  to anon, authenticated
+  using (bucket_id = 'picnic-photos');
+
+create policy "picnic_photos_insert"
+  on storage.objects for insert
+  to anon, authenticated
+  with check (bucket_id = 'picnic-photos');
