@@ -7,7 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     :root {
       /* Earthy base */
@@ -1221,6 +1220,20 @@
     </div>
   </div>
 
+  <script>
+    (function () {
+      var btn = document.getElementById("intro-enter-btn");
+      if (!btn) return;
+      btn.addEventListener("click", function () {
+        var c = document.getElementById("intro-curtain");
+        if (!c || c.classList.contains("gone")) return;
+        c.classList.add("gone");
+        c.setAttribute("aria-hidden", "true");
+        setTimeout(function () { c.remove(); }, 550);
+      });
+    })();
+  </script>
+
   <div id="confetti-layer" aria-hidden="true"></div>
 
   <div id="spotify-hidden-host" class="spotify-hidden" aria-hidden="true"></div>
@@ -1612,6 +1625,7 @@
     function initPartyPoppers() {
       const left = document.getElementById("popper-left");
       const right = document.getElementById("popper-right");
+      if (!left || !right) return;
 
       [left, right].forEach(p => {
         p.addEventListener("click", () => burstFromPopper(p, 70));
@@ -2448,12 +2462,13 @@
     // ── Init ──
     function boot() {
       try {
+        initMusic();
+
         const heroLine = document.getElementById("hero-date-line");
         if (heroLine) heroLine.textContent = formatHeroDate(EVENT_DATE);
 
         initSparkles();
         initPartyPoppers();
-        initMusic();
         spawnAmbientConfetti(15);
         setInterval(() => spawnAmbientConfetti(5), 5000);
 
@@ -2472,7 +2487,9 @@
         loadSupabaseLib(() => initSupabaseRSVPs());
       } catch (err) {
         console.error("Error al iniciar la invitación:", err);
+        initMusic();
         bindEvents();
+        initGuestbook();
       }
     }
 
