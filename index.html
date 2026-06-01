@@ -551,6 +551,16 @@
     }
 
     .bring-item .emoji { font-size: 1rem; flex-shrink: 0; }
+    .bring-item.full {
+      opacity: 0.5;
+      text-decoration: line-through;
+      filter: grayscale(0.35);
+    }
+    .bring-item .bring-max {
+      font-size: 0.62rem;
+      font-weight: 500;
+      opacity: 0.8;
+    }
     .bring-item:nth-child(1)  { background: #ffe0e0; border-left: 3px solid var(--coral); }
     .bring-item:nth-child(2)  { background: #fff3c4; border-left: 3px solid var(--sunshine); }
     .bring-item:nth-child(3)  { background: #ffe8d6; border-left: 3px solid var(--tangerine); }
@@ -559,7 +569,8 @@
     .bring-item:nth-child(6)  { background: #ffebee; border-left: 3px solid var(--bubblegum); }
     .bring-item:nth-child(7)  { background: #e3f2fd; border-left: 3px solid var(--sky); }
     .bring-item:nth-child(8)  { background: #efebe9; border-left: 3px solid #8d6e63; }
-    .bring-item:nth-child(9)  { background: #f3e5f5; border-left: 3px solid #ab47bc; grid-column: span 2; justify-content: center; }
+    .bring-item:nth-child(9)  { background: #f3e5f5; border-left: 3px solid #ab47bc; }
+    .bring-item:nth-child(10) { background: #fff8e1; border-left: 3px solid #ffb300; grid-column: span 2; justify-content: center; }
 
     /* Mensaje + fotos */
     .guestbook-form {
@@ -707,6 +718,7 @@
     .tally-list { list-style: none; display: flex; flex-direction: column; gap: 0.2rem; }
     .tally-list li { font-size: 0.78rem; color: var(--ink-soft); padding-left: 0.1rem; line-height: 1.35; }
     .tally-list li.empty { font-style: italic; opacity: 0.75; }
+    .tally-list li.full { text-decoration: line-through; opacity: 0.55; }
 
     .tally-live {
       font-size: 0.55rem;
@@ -1018,6 +1030,12 @@
 
     .bring-check:hover { border-color: var(--sunshine); transform: translateX(3px); }
     .bring-check.checked { border-color: var(--mint); background: #f0fff4; }
+    .bring-check.full {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .bring-check.full .label-text { text-decoration: line-through; }
 
     .bring-check input[type="checkbox"] {
       width: 18px;
@@ -1027,6 +1045,7 @@
     }
 
     .bring-check .label-text { flex: 1; font-size: 0.92rem; }
+    .item-max-hint { font-size: 0.75rem; color: var(--ink-soft); font-weight: 400; }
 
     .qty-control { display: none; align-items: center; gap: 0.25rem; flex-shrink: 0; }
     .bring-check.checked .qty-control { display: flex; }
@@ -1045,6 +1064,7 @@
     }
 
     .qty-btn:hover { background: var(--tangerine); color: white; }
+    .qty-btn:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
 
     .qty-val { min-width: 1.5rem; text-align: center; font-weight: 700; font-size: 0.9rem; }
 
@@ -1355,16 +1375,7 @@
       </div>
       <div class="card card-scrap card-tilt-right">
         <div class="card-pin" style="background: radial-gradient(circle at 35% 35%, #6bcbff, #2d8fd4);"></div>
-        <div class="bring-grid" id="static-bring-list">
-          <div class="bring-item"><span class="emoji">🍿</span><span>Bolsas de papas</span></div>
-          <div class="bring-item"><span class="emoji">🧃</span><span>Bebidas</span></div>
-          <div class="bring-item"><span class="emoji">🍪</span><span>Galletas</span></div>
-          <div class="bring-item"><span class="emoji">🥙</span><span>Hummus</span></div>
-          <div class="bring-item"><span class="emoji">🧀</span><span>Queso y crackers</span></div>
-          <div class="bring-item"><span class="emoji">🍓</span><span>Fruta / fresas</span></div>
-          <div class="bring-item"><span class="emoji">🥤</span><span>Agua fresca</span></div>
-          <div class="bring-item"><span class="emoji">🧺</span><span>Manta para el pasto</span></div>
-        </div>
+        <div class="bring-grid" id="static-bring-list"></div>
         <div class="tally-box">
           <h3>Lo que ya confirmaron <span id="tally-live" class="tally-live" title="Sincronización">●</span></h3>
           <ul class="tally-list" id="community-tally">
@@ -1538,15 +1549,43 @@
     const CONFETTI_COLORS = ["#ff6b6b","#ffd93d","#6bcbff","#c77dff","#95e1a3","#ff8fab","#ff9f43","#fff275","#e07a5f","#81b29a"];
 
     const ITEMS = [
-      { id: "papas",      emoji: "🍿", label: "Bolsas de papas",      unit: "bolsas",     hasQty: true },
-      { id: "bebidas",    emoji: "🧃", label: "Bebidas",              unit: "",           hasQty: true },
-      { id: "galletas",   emoji: "🍪", label: "Galletas",             unit: "paquetes",   hasQty: true },
-      { id: "hummus",     emoji: "🥙", label: "Hummus",               unit: "",           hasQty: true },
-      { id: "queso",      emoji: "🧀", label: "Queso y crackers",     unit: "",           hasQty: true },
-      { id: "fruta",      emoji: "🍓", label: "Fruta / fresas",       unit: "",           hasQty: true },
-      { id: "agua",       emoji: "🥤", label: "Agua fresca",          unit: "",           hasQty: true },
-      { id: "manta",      emoji: "🧺", label: "Manta para el pasto",  unit: "",           hasQty: true }
+      { id: "papas",    emoji: "🍿", label: "Bolsas de papas",     unit: "bolsas",   hasQty: true, max: 3 },
+      { id: "bebidas",  emoji: "🧃", label: "Bebidas",             unit: "",         hasQty: true, max: 4 },
+      { id: "galletas", emoji: "🍪", label: "Galletas",            unit: "paquetes", hasQty: true, max: 2 },
+      { id: "hummus",   emoji: "🥙", label: "Hummus",              unit: "",         hasQty: true, max: 1 },
+      { id: "queso",    emoji: "🧀", label: "Queso y crackers",    unit: "",         hasQty: true, max: 2 },
+      { id: "fruta",    emoji: "🍓", label: "Fruta / fresas",      unit: "",         hasQty: true, max: 5 },
+      { id: "agua",     emoji: "🥤", label: "Agua fresca",         unit: "",         hasQty: true, max: 3 },
+      { id: "manta",    emoji: "🧺", label: "Manta para el pasto", unit: "",         hasQty: true, max: null },
+      { id: "otro",     emoji: "✨", label: "Otro",                unit: "",         hasQty: true, max: null }
     ];
+
+    function getItemById(id) {
+      return ITEMS.find(i => i.id === id);
+    }
+
+    function getOthersItemTotal(rsvps, itemId, excludeRsvpId) {
+      let total = 0;
+      rsvps.forEach(r => {
+        if (r.id === excludeRsvpId) return;
+        total += (r.items && r.items[itemId]) ? r.items[itemId] : 0;
+      });
+      return total;
+    }
+
+    function getRemainingForItem(itemId, rsvps, excludeRsvpId) {
+      const item = getItemById(itemId);
+      if (!item || item.max == null) return Infinity;
+      return Math.max(0, item.max - getOthersItemTotal(rsvps, itemId, excludeRsvpId));
+    }
+
+    function isItemFull(itemId, rsvps, excludeRsvpId) {
+      return getRemainingForItem(itemId, rsvps, excludeRsvpId) <= 0;
+    }
+
+    function itemMaxHint(item) {
+      return item.max != null ? `<span class="item-max-hint"> · máx ${item.max}</span>` : "";
+    }
 
     // ── Confetti & party poppers ──
     function randomColor() {
@@ -1853,12 +1892,49 @@
     function renderStaticBringList() {
       const grid = document.getElementById("static-bring-list");
       if (!grid) return;
-      grid.innerHTML = ITEMS.map(item => `
-        <div class="bring-item">
+      const { totals } = computeTally(getRSVPs());
+      grid.innerHTML = ITEMS.map(item => {
+        const count = totals[item.id] || 0;
+        const full = item.max != null && count >= item.max;
+        const maxLabel = item.max != null
+          ? `<span class="bring-max"> (${count}/${item.max})</span>`
+          : "";
+        return `<div class="bring-item${full ? " full" : ""}" data-id="${item.id}">
           <span class="emoji">${item.emoji}</span>
-          <span>${item.label}</span>
-        </div>
-      `).join("");
+          <span class="bring-label">${item.label}${maxLabel}</span>
+        </div>`;
+      }).join("");
+    }
+
+    function updateChecklistAvailability() {
+      const list = document.getElementById("bring-checklist");
+      if (!list) return;
+      const rsvps = getRSVPs();
+      const myId = getMyRSVP()?.id;
+
+      list.querySelectorAll(".bring-check").forEach(row => {
+        const id = row.dataset.id;
+        const item = getItemById(id);
+        const cb = row.querySelector('input[type="checkbox"]');
+        if (!item || !cb) return;
+
+        const remaining = getRemainingForItem(id, rsvps, myId);
+        const maxQty = remaining === Infinity ? 99 : remaining;
+        row.dataset.maxQty = maxQty;
+
+        const full = item.max != null && remaining <= 0 && !cb.checked;
+        row.classList.toggle("full", full);
+        cb.disabled = full;
+
+        const valEl = row.querySelector(".qty-val");
+        if (valEl && cb.checked) {
+          const qty = parseInt(valEl.textContent, 10) || 1;
+          if (qty > maxQty) valEl.textContent = Math.max(1, maxQty);
+        }
+
+        const plus = row.querySelector(".qty-plus");
+        if (plus) plus.disabled = cb.checked && parseInt(row.querySelector(".qty-val")?.textContent || "1", 10) >= maxQty;
+      });
     }
 
     // ── Community tally ──
@@ -1885,7 +1961,9 @@
       let suffix = "";
       if (item.unit === "bolsas") suffix = count === 1 ? " bolsa confirmada" : " bolsas confirmadas";
       else if (item.unit === "paquetes") suffix = count === 1 ? " paquete" : " paquetes";
-      return `${item.emoji} ${item.label}: ${count}${suffix}`;
+      const maxPart = item.max != null ? ` (${count}/${item.max})` : "";
+      const fullClass = item.max != null && count >= item.max ? " full" : "";
+      return { text: `${item.emoji} ${item.label}: ${count}${suffix}${maxPart}`, fullClass };
     }
 
     function renderTally() {
@@ -1896,6 +1974,7 @@
 
       if (rsvpCount === 0) {
         ul.innerHTML = `<li class="empty">Todavía nadie ha confirmado — ¡sé el primero!</li>`;
+        renderStaticBringList();
         return;
       }
 
@@ -1903,10 +1982,12 @@
 
       ITEMS.forEach(item => {
         const line = formatTallyLine(item, totals[item.id]);
-        if (line) lines.push(`<li>${line}</li>`);
+        if (line) lines.push(`<li class="${line.fullClass.trim()}">${line.text}</li>`);
       });
 
       ul.innerHTML = lines.join("");
+      renderStaticBringList();
+      updateChecklistAvailability();
     }
 
     // ── Countdown ──
@@ -2120,15 +2201,16 @@
     function buildChecklist() {
       const list = document.getElementById("bring-checklist");
       list.innerHTML = ITEMS.map(item => {
+        const hint = itemMaxHint(item);
         if (!item.hasQty) {
           return `<label class="bring-check" data-id="${item.id}">
             <input type="checkbox" data-id="${item.id}">
-            <span class="label-text">${item.emoji} ${item.label}</span>
+            <span class="label-text">${item.emoji} ${item.label}${hint}</span>
           </label>`;
         }
         return `<label class="bring-check" data-id="${item.id}">
           <input type="checkbox" data-id="${item.id}">
-          <span class="label-text">${item.emoji} ${item.label}</span>
+          <span class="label-text">${item.emoji} ${item.label}${hint}</span>
           <span class="qty-control">
             <button type="button" class="qty-btn qty-minus" aria-label="Menos">−</button>
             <span class="qty-val">1</span>
@@ -2140,6 +2222,7 @@
       list.querySelectorAll(".bring-check input[type=checkbox]").forEach(cb => {
         cb.addEventListener("change", () => {
           cb.closest(".bring-check").classList.toggle("checked", cb.checked);
+          updateChecklistAvailability();
         });
       });
 
@@ -2148,16 +2231,22 @@
           e.preventDefault(); e.stopPropagation();
           const val = btn.nextElementSibling;
           val.textContent = Math.max(1, parseInt(val.textContent, 10) - 1);
+          updateChecklistAvailability();
         });
       });
 
       list.querySelectorAll(".qty-plus").forEach(btn => {
         btn.addEventListener("click", e => {
           e.preventDefault(); e.stopPropagation();
+          const row = btn.closest(".bring-check");
           const val = btn.previousElementSibling;
-          val.textContent = Math.min(99, parseInt(val.textContent, 10) + 1);
+          const maxQty = parseInt(row.dataset.maxQty || "99", 10);
+          val.textContent = Math.min(maxQty, parseInt(val.textContent, 10) + 1);
+          updateChecklistAvailability();
         });
       });
+
+      updateChecklistAvailability();
     }
 
     function prefillModal() {
@@ -2184,6 +2273,7 @@
           }
         }
       });
+      updateChecklistAvailability();
     }
 
     function openModal() {
@@ -2208,6 +2298,7 @@
       });
       btnBack.classList.toggle("hidden", currentStep === 0);
       btnNext.textContent = currentStep === 2 ? "Confirmar y enviar 🎉" : "Siguiente";
+      if (currentStep === 2) updateChecklistAvailability();
     }
 
     function collectItems() {
@@ -2253,6 +2344,14 @@
       const items = collectItems();
       const myOld = getMyRSVP();
       const rsvpId = myOld ? myOld.id : generateId();
+      const rsvps = getRSVPs();
+
+      ITEMS.forEach(item => {
+        if (items[item.id] > 0 && item.max != null) {
+          const allowed = getRemainingForItem(item.id, rsvps, rsvpId);
+          if (allowed !== Infinity) items[item.id] = Math.min(items[item.id], allowed);
+        }
+      });
 
       const rsvp = { id: rsvpId, name, guestCount, items, updatedAt: new Date().toISOString() };
 
