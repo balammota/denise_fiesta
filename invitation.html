@@ -507,6 +507,20 @@
       margin-bottom: var(--space-sm);
     }
 
+    .maps-open-link {
+      display: inline-block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--sage-dark);
+      text-decoration: none;
+      margin-bottom: var(--space-sm);
+      padding: 0.35rem 0.65rem;
+      background: rgba(129, 178, 154, 0.2);
+      border-radius: 999px;
+    }
+
+    .maps-open-link:hover { background: rgba(129, 178, 154, 0.35); }
+
     .map-wrap {
       border-radius: var(--radius-sm);
       overflow: hidden;
@@ -1074,14 +1088,15 @@
       <div class="card card-scrap card-tilt-left" id="location-card-wrap">
         <div class="card-pin"></div>
         <div id="location-card">
-          <p class="location-address">Calz. del Rey S/N, Bosque de Chapultepec I Secc, Miguel Hidalgo, 11580 Ciudad de México, CDMX</p>
+          <p class="location-address">Complejo Cultural Los Pinos<br><span style="font-size:0.88em;font-weight:400;color:var(--ink-soft)">Bosque de Chapultepec, Ciudad de México</span></p>
+          <a class="maps-open-link" href="https://maps.app.goo.gl/Fa2HXQEnGSt3GBbF8" target="_blank" rel="noopener">Cómo llegar en Google Maps →</a>
           <div class="map-wrap">
             <iframe
-              title="Mapa del picnic — Los Pinos, Chapultepec"
+              title="Mapa — Complejo Cultural Los Pinos"
               loading="lazy"
               referrerpolicy="no-referrer-when-downgrade"
               allowfullscreen
-              src="https://maps.google.com/maps?q=Calz.%20del%20Rey%20S%2FN%2C%20Bosque%20de%20Chapultepec%20I%20Secc%2C%20Miguel%20Hidalgo%2C%2011580%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX&output=embed&hl=es&z=16">
+              src="https://maps.google.com/maps?q=19.4155909,-99.1912819&output=embed&hl=es&z=17">
             </iframe>
           </div>
         </div>
@@ -1212,7 +1227,10 @@
     // ═══════════════════════════════════════════════════════════
     //  VARIABLES EDITABLES — cambia aquí lo que necesites
     // ═══════════════════════════════════════════════════════════
-    const LOCATION = "Calz. del Rey S/N, Bosque de Chapultepec I Secc, Miguel Hidalgo, 11580 Ciudad de México, CDMX";
+    const LOCATION = "Complejo Cultural Los Pinos, Bosque de Chapultepec, Ciudad de México";
+    const MAPS_URL = "https://maps.app.goo.gl/Fa2HXQEnGSt3GBbF8";
+    const MAPS_LAT = 19.4155909;
+    const MAPS_LNG = -99.1912819;
     const WHATSAPP_NUMBER = "+17252606690";
     const SPOTIFY_URL = "https://open.spotify.com/track/31i56LZnwE6uSu3exoHjtB"; // Neverita — Bad Bunny
     const EVENT_DATE = new Date("2026-06-06T13:00:00-06:00"); // Mexico City time — sábado 6 jun 2026, 1pm
@@ -1503,12 +1521,18 @@
             <p style="font-size:0.85rem; margin-top:0.5rem;">Te avisamos pronto por WhatsApp</p>
           </div>`;
       } else {
-        const encoded = encodeURIComponent(LOCATION.trim());
+        const mapSrc = (MAPS_LAT && MAPS_LNG)
+          ? `https://maps.google.com/maps?q=${MAPS_LAT},${MAPS_LNG}&output=embed&hl=es&z=17`
+          : `https://maps.google.com/maps?q=${encodeURIComponent(LOCATION.trim())}&output=embed&hl=es&z=16`;
+        const mapsLink = MAPS_URL
+          ? `<a class="maps-open-link" href="${escapeHtml(MAPS_URL)}" target="_blank" rel="noopener">Cómo llegar en Google Maps →</a>`
+          : "";
         card.innerHTML = `
           <p class="location-address">${escapeHtml(LOCATION.trim())}</p>
+          ${mapsLink}
           <div class="map-wrap">
-            <iframe title="Mapa del picnic" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-              src="https://maps.google.com/maps?q=${encoded}&output=embed&hl=es"></iframe>
+            <iframe title="Mapa del picnic" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen
+              src="${mapSrc}"></iframe>
           </div>`;
       }
     }
