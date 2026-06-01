@@ -949,6 +949,26 @@
 
     .btn-spotify:hover { transform: translateY(-2px) rotate(-2deg); }
 
+    .spotify-embed-wrap {
+      max-width: 100%;
+      margin: 0 auto var(--space-sm);
+      padding: var(--space-sm);
+      background: rgba(255,255,255,0.15);
+      border-radius: var(--radius-md);
+    }
+
+    .spotify-label {
+      font-size: 0.82rem;
+      color: white;
+      margin-bottom: var(--space-xs);
+      font-weight: 700;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .btn-spotify {
+      margin-top: var(--space-xs);
+    }
+
     .hidden { display: none !important; }
 
     @media (min-width: 480px) {
@@ -1009,6 +1029,35 @@
           </div>
           <div class="countdown-done hidden" id="countdown-done">¡Hoy es el día! 🎉</div>
         </div>
+        <script>
+          (function () {
+            var END = new Date("2026-06-06T19:00:00.000Z").getTime();
+            function pad(n) { return (n < 10 ? "0" : "") + n; }
+            function tick() {
+              var diff = END - Date.now();
+              var wrap = document.getElementById("countdown");
+              var done = document.getElementById("countdown-done");
+              if (!wrap || !done) return;
+              if (diff <= 0) {
+                wrap.classList.add("hidden");
+                done.classList.remove("hidden");
+                return;
+              }
+              wrap.classList.remove("hidden");
+              done.classList.add("hidden");
+              var d = document.getElementById("cd-days");
+              var h = document.getElementById("cd-hours");
+              var m = document.getElementById("cd-minutes");
+              var s = document.getElementById("cd-seconds");
+              if (d) d.textContent = pad(Math.floor(diff / 86400000));
+              if (h) h.textContent = pad(Math.floor(diff / 3600000) % 24);
+              if (m) m.textContent = pad(Math.floor(diff / 60000) % 60);
+              if (s) s.textContent = pad(Math.floor(diff / 1000) % 60);
+            }
+            tick();
+            setInterval(tick, 1000);
+          })();
+        </script>
       </div>
 
       <span class="float-deco" style="top:0; left:2%; --rot:-12deg;">🎀</span>
@@ -1024,7 +1073,18 @@
       </div>
       <div class="card card-scrap card-tilt-left" id="location-card-wrap">
         <div class="card-pin"></div>
-        <div id="location-card"></div>
+        <div id="location-card">
+          <p class="location-address">Calz. del Rey S/N, Bosque de Chapultepec I Secc, Miguel Hidalgo, 11580 Ciudad de México, CDMX</p>
+          <div class="map-wrap">
+            <iframe
+              title="Mapa del picnic — Los Pinos, Chapultepec"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen
+              src="https://maps.google.com/maps?q=Calz.%20del%20Rey%20S%2FN%2C%20Bosque%20de%20Chapultepec%20I%20Secc%2C%20Miguel%20Hidalgo%2C%2011580%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX&output=embed&hl=es&z=16">
+            </iframe>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1074,7 +1134,21 @@
     <!-- 6. Footer -->
     <footer>
       <p class="heart-line">Hecho con amor 🌿</p>
-      <a class="btn btn-spotify hidden" id="spotify-btn" href="#" target="_blank" rel="noopener">Escuchar playlist 🎵</a>
+      <div class="spotify-embed-wrap">
+        <p class="spotify-label">🎵 Neverita — Bad Bunny</p>
+        <iframe
+          id="spotify-embed"
+          title="Spotify — Neverita"
+          style="border-radius:12px"
+          src="https://open.spotify.com/embed/track/31i56LZnwE6uSu3exoHjtB?utm_source=generator&theme=0"
+          width="100%"
+          height="152"
+          frameborder="0"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy">
+        </iframe>
+      </div>
+      <a class="btn btn-spotify" id="spotify-btn" href="https://open.spotify.com/track/31i56LZnwE6uSu3exoHjtB" target="_blank" rel="noopener">Abrir en Spotify</a>
     </footer>
   </div>
 
@@ -1134,7 +1208,6 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
     // ═══════════════════════════════════════════════════════════
     //  VARIABLES EDITABLES — cambia aquí lo que necesites
@@ -1421,6 +1494,7 @@
     // ── Location ──
     function renderLocation() {
       const card = document.getElementById("location-card");
+      if (!card || card.querySelector(".map-wrap")) return;
       if (!LOCATION.trim()) {
         card.innerHTML = `
           <div class="location-pending">
@@ -1543,10 +1617,7 @@
     // ── Spotify ──
     function renderSpotify() {
       const btn = document.getElementById("spotify-btn");
-      if (SPOTIFY_URL.trim()) {
-        btn.href = SPOTIFY_URL.trim();
-        btn.classList.remove("hidden");
-      }
+      if (btn && SPOTIFY_URL.trim()) btn.href = SPOTIFY_URL.trim();
     }
 
     // ── RSVP state ──
@@ -1554,7 +1625,7 @@
       const my = getMyRSVP();
       const btn = document.getElementById("rsvp-open-btn");
       const msg = document.getElementById("rsvp-confirmed-msg");
-
+      if (!btn || !msg) return;
       if (my) {
         btn.textContent = "Ya confirmaste 🎉 ¿Quieres actualizar?";
         msg.textContent = `${my.name}, confirmaste para ${my.guestCount} ${my.guestCount === 1 ? "persona" : "personas"}.`;
@@ -1747,27 +1818,34 @@
       if (!ok) alert("Tu RSVP se guardó en este dispositivo pero no pudo subir a la nube. Intenta actualizar de nuevo.");
     }
 
-    // ── Event listeners ──
-    document.getElementById("rsvp-open-btn").addEventListener("click", openModal);
-    document.getElementById("modal-close").addEventListener("click", closeModal);
-    overlay.addEventListener("click", e => { if (e.target === overlay) closeModal(); });
+    function loadSupabaseLib(callback) {
+      if (window.supabase) { callback(); return; }
+      const s = document.createElement("script");
+      s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js";
+      s.onload = callback;
+      s.onerror = () => console.warn("Supabase no cargó — RSVP local solamente");
+      document.head.appendChild(s);
+    }
 
-    btnBack.addEventListener("click", () => {
-      if (currentStep > 0) { currentStep--; updateStepUI(); }
-    });
-
-    btnNext.addEventListener("click", () => {
-      if (currentStep === 0 && !document.getElementById("rsvp-name").value.trim()) {
-        document.getElementById("rsvp-name").focus();
-        return;
-      }
-      if (currentStep < 2) { currentStep++; updateStepUI(); }
-      else submitRSVP();
-    });
-
-    document.addEventListener("keydown", e => {
-      if (e.key === "Escape" && overlay.classList.contains("open")) closeModal();
-    });
+    function bindEvents() {
+      const openBtn = document.getElementById("rsvp-open-btn");
+      const closeBtn = document.getElementById("modal-close");
+      if (openBtn) openBtn.addEventListener("click", openModal);
+      if (closeBtn) closeBtn.addEventListener("click", closeModal);
+      if (overlay) overlay.addEventListener("click", e => { if (e.target === overlay) closeModal(); });
+      if (btnBack) btnBack.addEventListener("click", () => { if (currentStep > 0) { currentStep--; updateStepUI(); } });
+      if (btnNext) btnNext.addEventListener("click", () => {
+        if (currentStep === 0 && !document.getElementById("rsvp-name").value.trim()) {
+          document.getElementById("rsvp-name").focus();
+          return;
+        }
+        if (currentStep < 2) { currentStep++; updateStepUI(); }
+        else submitRSVP();
+      });
+      document.addEventListener("keydown", e => {
+        if (e.key === "Escape" && overlay && overlay.classList.contains("open")) closeModal();
+      });
+    }
 
     // ── Init ──
     function boot() {
@@ -1789,9 +1867,12 @@
         updateCountdown(true);
         setInterval(() => updateCountdown(false), 1000);
 
-        initSupabaseRSVPs();
+        bindEvents();
+
+        loadSupabaseLib(() => initSupabaseRSVPs());
       } catch (err) {
         console.error("Error al iniciar la invitación:", err);
+        bindEvents();
       }
     }
 
