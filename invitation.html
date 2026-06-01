@@ -1364,7 +1364,6 @@
           <div class="bring-item"><span class="emoji">🍓</span><span>Fruta / fresas</span></div>
           <div class="bring-item"><span class="emoji">🥤</span><span>Agua fresca</span></div>
           <div class="bring-item"><span class="emoji">🧺</span><span>Manta para el pasto</span></div>
-          <div class="bring-item"><span class="emoji">⏳</span><span>Por confirmar</span></div>
         </div>
         <div class="tally-box">
           <h3>Lo que ya confirmaron <span id="tally-live" class="tally-live" title="Sincronización">●</span></h3>
@@ -1546,8 +1545,7 @@
       { id: "queso",      emoji: "🧀", label: "Queso y crackers",     unit: "",           hasQty: true },
       { id: "fruta",      emoji: "🍓", label: "Fruta / fresas",       unit: "",           hasQty: true },
       { id: "agua",       emoji: "🥤", label: "Agua fresca",          unit: "",           hasQty: true },
-      { id: "manta",      emoji: "🧺", label: "Manta para el pasto",  unit: "",           hasQty: true },
-      { id: "confirmar",  emoji: "⏳", label: "Por confirmar",         unit: "",           hasQty: false }
+      { id: "manta",      emoji: "🧺", label: "Manta para el pasto",  unit: "",           hasQty: true }
     ];
 
     // ── Confetti & party poppers ──
@@ -1862,20 +1860,17 @@
     function computeTally(rsvps) {
       const totals = {};
       ITEMS.forEach(i => { totals[i.id] = 0; });
-      let porConfirmarCount = 0;
 
       rsvps.forEach(rsvp => {
         if (!rsvp.items) return;
         ITEMS.forEach(item => {
-          if (item.id === "confirmar") {
-            if (rsvp.items.confirmar) porConfirmarCount++;
-          } else if (rsvp.items[item.id] > 0) {
+          if (rsvp.items[item.id] > 0) {
             totals[item.id] += rsvp.items[item.id];
           }
         });
       });
 
-      return { totals, porConfirmarCount };
+      return { totals };
     }
 
     function formatTallyLine(item, count) {
@@ -1888,19 +1883,14 @@
 
     function renderTally() {
       const rsvps = getRSVPs();
-      const { totals, porConfirmarCount } = computeTally(rsvps);
+      const { totals } = computeTally(rsvps);
       const ul = document.getElementById("community-tally");
       const lines = [];
 
       ITEMS.forEach(item => {
-        if (item.id === "confirmar") return;
         const line = formatTallyLine(item, totals[item.id]);
         if (line) lines.push(`<li>${line}</li>`);
       });
-
-      if (porConfirmarCount > 0) {
-        lines.push(`<li>⏳ Por confirmar: ${porConfirmarCount} ${porConfirmarCount === 1 ? "persona" : "personas"}</li>`);
-      }
 
       ul.innerHTML = lines.length
         ? lines.join("")
@@ -2174,10 +2164,7 @@
         row.classList.remove("checked");
 
         if (my && my.items) {
-          if (id === "confirmar") {
-            cb.checked = !!my.items.confirmar;
-            row.classList.toggle("checked", cb.checked);
-          } else if (my.items[id] > 0) {
+          if (my.items[id] > 0) {
             cb.checked = true;
             row.classList.add("checked");
             const valEl = row.querySelector(".qty-val");
@@ -2214,17 +2201,13 @@
     function collectItems() {
       const items = {};
       ITEMS.forEach(i => { items[i.id] = 0; });
-      items.confirmar = false;
 
       document.querySelectorAll("#bring-checklist .bring-check").forEach(row => {
         const id = row.dataset.id;
         const cb = row.querySelector("input[type=checkbox]");
         if (!cb.checked) return;
-        if (id === "confirmar") items.confirmar = true;
-        else {
-          const valEl = row.querySelector(".qty-val");
-          items[id] = valEl ? parseInt(valEl.textContent, 10) : 1;
-        }
+        const valEl = row.querySelector(".qty-val");
+        items[id] = valEl ? parseInt(valEl.textContent, 10) : 1;
       });
       return items;
     }
@@ -2232,10 +2215,6 @@
     function formatItemsForMessage(items) {
       const parts = [];
       ITEMS.forEach(item => {
-        if (item.id === "confirmar") {
-          if (items.confirmar) parts.push("⏳ por confirmar");
-          return;
-        }
         const q = items[item.id];
         if (q > 0) {
           let txt = `${item.emoji} ${item.label}`;
