@@ -2367,7 +2367,7 @@
       btnNext.disabled = false;
       updateStepUI();
 
-      const msg = `${name} confirmó su asistencia 🎉 Van ${guestCount} ${guestCount === 1 ? "persona" : "personas"} en total. Van a llevar: ${formatItemsForMessage(items)}.`;
+      const msg = `Hola amigo, gracias por la invitacion, confirmo y llevo ${formatItemsForMessage(items)}.`;
       const waUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, "")}?text=${encodeURIComponent(msg)}`;
 
       closeModal();
